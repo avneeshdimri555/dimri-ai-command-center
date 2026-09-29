@@ -1,0 +1,10 @@
+{
+  "name": "dimri-ai-command-center",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DIMRI AI command center frontend prototype",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "dev": "python3 -m http.server 3000"
+  }
+}

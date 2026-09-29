@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIMRI AI | Command Center</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#f4f6ff;font-family:Arial,sans-serif}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:230px;background:#11182b;padding:25px 16px;border-right:1px solid #26304b}
+.logo{font-size:23px;font-weight:800;color:#8c9cff;margin-bottom:35px}
+.logo span{color:#fff}
+.nav{padding:13px;margin:7px 0;border-radius:10px;color:#aab4d0;cursor:pointer}
+.nav.active,.nav:hover{background:#252f50;color:white}
+.main{padding:30px;width:100%;max-width:1500px;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:27px;margin:0 0 8px}
+.muted{color:#99a5c3;font-size:14px}
+.pill{background:#153e35;color:#65e7bd;padding:9px 13px;border-radius:20px;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:28px 0}
+.card{background:#141d33;border:1px solid #273451;border-radius:15px;padding:20px}
+.label{font-size:13px;color:#9aa8c7}
+.value{font-size:28px;font-weight:bold;margin:12px 0 5px}
+.section-title{font-size:19px;margin:28px 0 15px}
+.agents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.agent{background:#141d33;border:1px solid #273451;border-radius:15px;padding:18px}
+.agent-head{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.avatar{width:43px;height:43px;border-radius:12px;background:#27365c;display:grid;place-items:center;font-size:22px}
+.agent-name{font-weight:bold}
+.status{font-size:12px;color:#65e7bd;margin-top:5px}
+button{border:0;border-radius:9px;background:#6578ef;color:white;padding:12px 16px;font-weight:bold;cursor:pointer}
+button:hover{filter:brightness(1.12)}
+.secondary{background:#293653;color:#e6ebff}
+.task{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #273451;flex-wrap:wrap}
+.task:last-child{border-bottom:0}
+.small{font-size:13px;color:#9aa8c7}
+#message{color:#70e2bd;margin-top:14px;font-size:14px}
+.view{display:none}
+.view.active{display:block}
+.page-header{margin-bottom:18px}
+.empty-state{padding:18px 0 10px;color:#aab4d0}
+.list-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:18px}
+.inline-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.timeline{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.timeline-item{background:#141d33;border:1px solid #273451;border-radius:12px;padding:16px}
+.timeline-item .time{font-size:12px;color:#8ca0d0;display:block;margin-top:8px}
+.settings-list{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#141d33;border:1px solid #273451;border-radius:12px;padding:16px}
+.switch{position:relative;width:46px;height:26px;background:#273451;border-radius:999px}
+.switch::after{content:"";position:absolute;top:3px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:all .2s ease}
+.switch.on{background:#1c6e5a}
+.switch.on::after{left:22px}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}.agents{grid-template-columns:repeat(2,1fr)}.list-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.sidebar{width:65px;padding:18px 8px}.logo{font-size:0}.logo:first-letter{font-size:22px}.nav{font-size:0;text-align:center}.nav:first-letter{font-size:18px}.main{padding:17px 12px}.agents{grid-template-columns:1fr}.cards{gap:9px}.card{padding:13px}.value{font-size:23px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="logo">D<span>IMRI AI</span></div>
+  <div class="nav active" data-view="dashboard">▦ &nbsp; Dashboard</div>
+  <div class="nav" data-view="agents">◈ &nbsp; AI Agents</div>
+  <div class="nav" data-view="projects">▤ &nbsp; Projects</div>
+  <div class="nav" data-view="approvals">✓ &nbsp; Approvals</div>
+  <div class="nav" data-view="activity">◷ &nbsp; Activity</div>
+  <div class="nav" data-view="settings">⚙ &nbsp; Settings</div>
+</aside>
+<main class="main">
+  <section class="view active" data-view="dashboard">
+    <div class="top">
+      <div>
+        <h1>Command Center</h1>
+        <div class="muted">Welcome, Avneesh. Your AI workspace is ready.</div>
+      </div>
+      <div class="pill">● Prototype Mode</div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="label">AI Agents</div><div class="value">6</div><div class="small">Planned agents</div></div>
+      <div class="card"><div class="label">Active Tasks</div><div class="value" id="active">0</div><div class="small">Demo activity</div></div>
+      <div class="card"><div class="label">Projects</div><div class="value">5</div><div class="small">Initial app ideas</div></div>
+      <div class="card"><div class="label">Approvals</div><div class="value" id="approvals">1</div><div class="small">Awaiting review</div></div>
+    </div>
+
+    <div class="section-title">Your AI Workforce</div>
+    <div class="agents">
+      <div class="agent"><div class="agent-head"><div class="avatar">🧠</div><div><div class="agent-name">DIMRI CEO</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Coordinates tasks and reports to the founder.</div></div>
+      <div class="agent"><div class="agent-head"><div class="avatar">🔎</div><div><div class="agent-name">Research Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Plans market and competitor research.</div></div>
+      <div class="agent"><div class="agent-head"><div class="avatar">📋</div><div><div class="agent-name">Product Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Creates product requirements and features.</div></div>
+      <div class="agent"><div class="agent-head"><div class="avatar">💻</div><div><div class="agent-name">Builder Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Helps build and update app code.</div></div>
+      <div class="agent"><div class="agent-head"><div class="avatar">🧪</div><div><div class="agent-name">QA Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Plans checks and reports test results.</div></div>
+      <div class="agent"><div class="agent-head"><div class="avatar">⚙️</div><div><div class="agent-name">OPS Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Tracks releases and operations.</div></div>
+    </div>
+
+    <div class="section-title">Task Center</div>
+    <div class="card">
+      <div class="task"><div><b>Build first prototype</b><div class="small">DIMRI AI · Frontend demo</div></div><span class="pill" id="taskstatus">Ready</span></div>
+      <div class="task"><div><b>Review initial app concepts</b><div class="small">Product planning · Pending</div></div><button class="secondary" onclick="review()">Review</button></div>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button onclick="runTask()">▶ Run Demo Task</button>
+        <button class="secondary" onclick="approve()">✓ Approve Demo</button>
+      </div>
+      <div id="message"></div>
+    </div>
+    <p class="small" style="margin-top:24px">DIMRI AI · Founder-controlled workspace · Frontend prototype only</p>
+  </section>
+
+  <section class="view" data-view="agents">
+    <div class="page-header">
+      <h1>AI Agents</h1>
+      <div class="muted">Review the workforce assigned to each strategic area.</div>
+    </div>
+    <div class="list-grid">
+      <div class="card"><div class="label">DIMRI CEO</div><div class="value" style="font-size:24px">Lead</div><div class="small">Oversight, approvals, high-level decisions.</div></div>
+      <div class="card"><div class="label">Research Agent</div><div class="value" style="font-size:24px">Queued</div><div class="small">Market scan, positioning, and competitor updates.</div></div>
+      <div class="card"><div class="label">Product Agent</div><div class="value" style="font-size:24px">Focused</div><div class="small">Roadmap planning and product feature design.</div></div>
+      <div class="card"><div class="label">Builder Agent</div><div class="value" style="font-size:24px">Ready</div><div class="small">Build execution and implementation support.</div></div>
+      <div class="card"><div class="label">QA Agent</div><div class="value" style="font-size:24px">Monitoring</div><div class="small">Quality checks and validation passes.</div></div>
+      <div class="card"><div class="label">OPS Agent</div><div class="value" style="font-size:24px">Stable</div><div class="small">Launch and operational health tracking.</div></div>
+    </div>
+  </section>
+
+  <section class="view" data-view="projects">
+    <div class="page-header">
+      <h1>Projects</h1>
+      <div class="muted">Core initiatives and strategic product tracks.</div>
+    </div>
+    <div class="list-grid">
+      <div class="card"><div class="label">Project A</div><div class="value" style="font-size:24px">Launch</div><div class="small">Founder-facing AI command center prototype.</div></div>
+      <div class="card"><div class="label">Project B</div><div class="value" style="font-size:24px">Discovery</div><div class="small">Research and benchmarking for AI channels.</div></div>
+      <div class="card"><div class="label">Project C</div><div class="value" style="font-size:24px">Planning</div><div class="small">Feature suite and product backlog curation.</div></div>
+      <div class="card"><div class="label">Project D</div><div class="value" style="font-size:24px">Ops</div><div class="small">Release templates and operational readiness.</div></div>
+    </div>
+  </section>
+
+  <section class="view" data-view="approvals">
+    <div class="page-header">
+      <h1>Approvals</h1>
+      <div class="muted">Pending decisions requiring founder review.</div>
+    </div>
+    <div class="card">
+      <div class="task"><div><b>Prototype approval</b><div class="small">Approver: DIMRI CEO · 12 mins ago</div></div><span class="pill">Awaiting</span></div>
+      <div class="task"><div><b>Market research brief</b><div class="small">Approver: Founder · Ready to review</div></div><button class="secondary" onclick="approve()">Approve</button></div>
+      <div class="task"><div><b>Launch checklist</b><div class="small">Approver: Ops lead · Reviewed</div></div><span class="small">Approved</span></div>
+    </div>
+  </section>
+
+  <section class="view" data-view="activity">
+    <div class="page-header">
+      <h1>Activity</h1>
+      <div class="muted">Recent motion across the AI workforce.</div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item"><strong>Builder Agent</strong> updated the frontend prototype.<span class="time">10:42 AM</span></div>
+      <div class="timeline-item"><strong>Research Agent</strong> queued competitor scan and market notes.<span class="time">9:18 AM</span></div>
+      <div class="timeline-item"><strong>QA Agent</strong> completed validation review for the demo page.<span class="time">8:55 AM</span></div>
+      <div class="timeline-item"><strong>DIMRI CEO</strong> approved the onboarding board summary.<span class="time">7:30 AM</span></div>
+    </div>
+  </section>
+
+  <section class="view" data-view="settings">
+    <div class="page-header">
+      <h1>Settings</h1>
+      <div class="muted">Workspace control options for the prototype.</div>
+    </div>
+    <div class="settings-list">
+      <div class="setting-row"><span>Auto-approve demo tasks</span><div class="switch on" aria-label="Auto-approve demo tasks"></div></div>
+      <div class="setting-row"><span>Email notifications</span><div class="switch on" aria-label="Email notifications"></div></div>
+      <div class="setting-row"><span>Agent collaboration mode</span><div class="switch" aria-label="Agent collaboration mode"></div></div>
+      <div class="setting-row"><span>Activity summary digest</span><div class="switch on" aria-label="Activity summary digest"></div></div>
+    </div>
+  </section>
+</main>
+</div>
+<script>
+const navButtons = document.querySelectorAll('.nav');
+const views = document.querySelectorAll('.view');
+
+function showView(viewName) {
+  navButtons.forEach((button) => {
+    const isActive = button.dataset.view === viewName;
+    button.classList.toggle('active', isActive);
+  });
+
+  views.forEach((view) => {
+    const isActive = view.dataset.view === viewName;
+    view.classList.toggle('active', isActive);
+  });
+}
+
+navButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    showView(button.dataset.view);
+  });
+});
+
+function runTask(){
+ document.getElementById('active').textContent='1';
+ document.getElementById('taskstatus').textContent='Demo Running';
+ document.getElementById('message').textContent='Demo task started. No real AI agent is connected yet.';
+}
+function approve(){
+ document.getElementById('approvals').textContent='0';
+ document.getElementById('message').textContent='Demo approval recorded locally. No production action was taken.';
+}
+function review(){
+ document.getElementById('message').textContent='Review screen will be connected in a later step.';
+}
+</script>
+</body>
+</html>
