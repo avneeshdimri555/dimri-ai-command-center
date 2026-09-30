@@ -9,6 +9,7 @@ from .db import audit_events
 from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
+from .integrations import integration_status
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -97,6 +98,10 @@ def pillars() -> dict[str, Any]:
 @app.get("/api/marketplaces")
 def marketplaces() -> dict[str, Any]:
     return {"marketplaces": marketplace_status()}
+
+@app.get("/api/integrations")
+def integrations() -> dict[str, Any]:
+    return {"integrations": integration_status()}
 
 @app.get("/api/digital-products")
 def digital_products() -> dict[str, Any]:
