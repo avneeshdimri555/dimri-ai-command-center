@@ -18,6 +18,11 @@ AGENTS = [
     {"id":"builder","name":"Software Builder Agent","department":"Product & Development","status":"ready"},
     {"id":"qa","name":"QA Agent","department":"Product & Development","status":"ready"},
     {"id":"support","name":"Customer Success Agent","department":"Operations & Support","status":"ready"},
+    {"id":"after-sales","name":"After-Sales Service Agent","department":"After-Sales & Retention","status":"ready"},
+    {"id":"retention","name":"Retention Agent","department":"After-Sales & Retention","status":"ready"},
+    {"id":"renewal","name":"Renewal Agent","department":"After-Sales & Retention","status":"ready"},
+    {"id":"feedback","name":"Customer Feedback Agent","department":"After-Sales & Retention","status":"ready"},
+    {"id":"warranty","name":"Warranty & Support Agent","department":"After-Sales & Retention","status":"ready"},
     {"id":"finance","name":"Finance Agent","department":"Operations & Support","status":"ready"},
     {"id":"security","name":"Security Agent","department":"Operations & Support","status":"ready"},
 ]
@@ -59,8 +64,9 @@ def route_command(command: Command) -> dict[str, Any]:
         routes.append({"department":"Product & Development","agents":["Product Manager Agent","Software Builder Agent","QA Agent"]})
     if any(k in text for k in ["marketing", "seo", "campaign", "brand"]):
         routes.append({"department":"Marketing & Growth","agents":["Marketing Head Agent","SEO Agent","Analytics Agent"]})
-    if any(k in text for k in ["support", "billing", "finance", "delivery", "onboard"]):
-        routes.append({"department":"Operations & Support","agents":["Customer Success Agent","Billing Agent","Finance Agent"]})
+    if any(k in text for k in ["after sales", "after-sales", "renewal", "retention", "feedback", "warranty", "support", "billing", "finance", "delivery", "onboard"]):
+        routes.append({"department":"Operations & Support","agents":["Customer Success Agent","Support Agent","Delivery Coordinator"]})
+        routes.append({"department":"After-Sales & Retention","agents":["After-Sales Service Agent","Customer Feedback Agent","Retention Agent","Renewal Agent"]})
     if not routes:
         routes.append({"department":"Executive","agents":["DIMRI CEO"]})
     return {"accepted":True,"command":command.command,"priority":command.priority,"status":"routed","routes":routes}
