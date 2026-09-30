@@ -21,6 +21,7 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
   <div class="brand"><div class="brandmark">D</div><div><b>DIMRI AI</b><small>AUTONOMOUS COMPANY OS</small></div></div>
   <div class="nav-title">Command</div>
   <button class="nav active" data-view="overview"><span class="ico">◈</span><span>Overview</span></button>
+  <button class="nav" data-view="structure"><span class="ico">🏢</span><span>Company Structure</span></button>
   <button class="nav" data-view="brain"><span class="ico">🧠</span><span>Company Brain</span></button>
   <button class="nav" data-view="agents"><span class="ico">◉</span><span>AI Workforce</span></button>
   <button class="nav" data-view="ghost"><span class="ico">👻</span><span>Ghost Mode</span></button>
@@ -40,7 +41,7 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
   <div class="sidebar-foot"><div class="online">● SYSTEM ONLINE</div><div class="tiny" style="margin-top:5px">Founder controlled · Prototype OS</div></div>
 </aside>
 <main class="main">
-<div class="topbar"><div class="crumb">DIMRI AI / <span id="crumb">Overview</span></div><div class="top-actions"><input id="search" class="search" placeholder="Search agents, clients, products…"><span class="badge">● Founder Mode</span></div></div>
+<div class="topbar"><div class="crumb">AISHANI ENTERPRISES / DIMRI STUDIO / <span id="crumb">Overview</span></div><div class="top-actions"><input id="search" class="search" placeholder="Search agents, clients, products…"><span class="badge">● Founder Mode</span></div></div>
 
 <section class="view active" data-view="overview">
 <div class="hero"><div><h1>Autonomous Company Command Center</h1><p>One operating layer for AI teams, Ghost Mode media, customer acquisition, client delivery and product growth.</p></div><button class="btn" onclick="openModal('command')">+ New Command</button></div>
@@ -69,6 +70,27 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
 </div></div>
 <div class="grid two" style="margin-top:15px"><div class="panel"><div class="panel-head"><h2>Live Activity</h2><button class="btn secondary" onclick="showView('activity')">View all</button></div><div class="list" id="activityPreview"></div></div><div class="panel"><div class="panel-head"><h2>Founder Approvals</h2><span class="chip">4 pending</span></div><div class="list"><div class="approval"><div class="lead-row"><div><b>Publish Ghost Mode batch</b><div class="tiny">8 researched pieces · YouTube + Instagram</div></div><span class="tag">Review</span></div></div><div class="approval"><div class="lead-row"><div><b>Client proposal · Local Business</b><div class="tiny">Website + content package</div></div><span class="tag hot">Decision</span></div></div></div></div></div>
 <div class="footer">DIMRI AI prototype · Frontend simulation. Real integrations, credentials, publishing and money movement require explicit connected services and permission gates.</div>
+</section>
+
+<section class="view" data-view="structure">
+<div class="hero"><div><h1>🏢 Aishani Enterprises → DIMRI Studio</h1><p>Five commercial pillars powered by one shared DIMRI AI Company Brain.</p></div><button class="btn" onclick="showView('brain')">Open Company Brain</button></div>
+<div class="panel" style="margin-bottom:15px"><div class="panel-head"><h2>Corporate Map</h2><span class="chip green">One Company Brain</span></div>
+<div class="flow" style="flex-wrap:wrap"><div class="f">👤 Founder</div><span class="arrow">→</span><div class="f">🏢 Aishani Enterprises<br>Parent</div><span class="arrow">→</span><div class="f">⚡ DIMRI Studio<br>Operating Studio</div><span class="arrow">→</span><div class="f">🧠 DIMRI AI OS<br>Shared Intelligence</div></div></div>
+<div class="grid three">
+<div class="dept"><div class="dept-icon">🎬</div><h3>1 · DIMRI Media</h3><p>YouTube + Instagram, Ghost Mode, Shorts/Reels, long-form, thumbnails, SEO, publishing, monetization and analytics.</p><div class="count">Content Engine</div><div class="bar"><i style="width:82%"></i></div></div>
+<div class="dept"><div class="dept-icon">🛍️</div><h3>2 · DIMRI Digital Commerce</h3><p>E-books, stickers, printables, templates, Gumroad, eBay, Shopify, Pinterest, blogging, SEO and affiliate revenue.</p><div class="count">Digital Product Engine</div><div class="bar"><i style="width:74%"></i></div></div>
+<div class="dept"><div class="dept-icon">📱</div><h3>3 · DIMRI Apps</h3><p>Develop, test, monitor, market and grow VANI, DermaVeda, YOU AI and future apps.</p><div class="count">Software Portfolio</div><div class="bar"><i style="width:68%"></i></div></div>
+<div class="dept"><div class="dept-icon">🎮</div><h3>4 · DIMRI Games</h3><p>Game ideas, GDD, coding, art, audio, QA, publishing, user acquisition, monetization, analytics and live ops.</p><div class="count">Game Studio</div><div class="bar"><i style="width:48%"></i></div></div>
+<div class="dept"><div class="dept-icon">🚀</div><h3>5 · DIMRI Products & Services</h3><p>The existing 50 commercial AI offers, organized into creator, marketing, sales, SMB and creative/consumer categories.</p><div class="count">50-offer portfolio</div><div class="bar"><i style="width:61%"></i></div></div>
+<div class="dept"><div class="dept-icon">🧩</div><h3>Shared Company Services</h3><p>CEO, memory, task queue, finance, operations, security, legal support, analytics, integrations and founder approvals.</p><div class="count">Cross-pillar infrastructure</div><div class="bar"><i style="width:90%"></i></div></div>
+</div>
+<div class="grid two" style="margin-top:15px">
+<div class="panel"><div class="panel-head"><h2>DIMRI Apps Portfolio</h2><span class="tiny">Build → QA → Store → Growth</span></div><div class="list" id="structureApps"><div class="content-card"><b>VANI</b><p>Building · AI voice/language companion</p></div><div class="content-card"><b>DermaVeda</b><p>Planned · AI skin/face analysis</p></div><div class="content-card"><b>YOU AI</b><p>Planned · Personal AI assistant</p></div></div></div>
+<div class="panel"><div class="panel-head"><h2>Game Studio Modules</h2><span class="tiny">DIMRI Games</span></div><div class="chips"><span class="chip">Game Research</span><span class="chip">Game Design</span><span class="chip">Engineering</span><span class="chip">Art & Animation</span><span class="chip">Audio</span><span class="chip">QA</span><span class="chip">Publishing</span><span class="chip">User Acquisition</span><span class="chip">Monetization</span><span class="chip">Analytics</span><span class="chip">Live Ops</span><span class="chip">Community</span></div></div>
+</div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Commercial 50 · Portfolio Map</h2><span class="tiny">Pillar 5</span></div><div class="grid five" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
+<div class="content-card"><b>01–10</b><p>Content & Creator</p></div><div class="content-card"><b>11–20</b><p>Marketing & Growth</p></div><div class="content-card"><b>21–30</b><p>Sales & CRM</p></div><div class="content-card"><b>31–40</b><p>SMB / Industry Solutions</p></div><div class="content-card"><b>41–50</b><p>Creative / Consumer</p></div></div></div>
+<div class="footer">Aishani Enterprises is the parent umbrella; DIMRI Studio is the operating studio. DIMRI AI is the internal AI operating layer connecting all five pillars.</div>
 </section>
 
 <section class="view" data-view="brain">
@@ -291,7 +313,7 @@ function closeModal(){$('modal').classList.remove('open')}
 function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addActivity('DIMRI CEO','Created workflow: '+v);closeModal();toast('Workflow created in prototype queue')}
 document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
 $('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
-$('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products')});
+$('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products');else if(q.includes('structure')||q.includes('aishani')||q.includes('pillar')||q.includes('game'))showView('structure')});
 renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();loadFactory();
 
 async function createDigitalProduct(){
