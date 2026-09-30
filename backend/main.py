@@ -47,6 +47,33 @@ def create_command(command: Command) -> dict[str, Any]:
 def create_workflow(workflow: Workflow) -> dict[str, Any]:
     return {"accepted": True, "workflow": workflow.model_dump(), "status": "queued", "created_at": datetime.now(timezone.utc).isoformat()}
 
+@app.post("/api/brain/route")
+def route_command(command: Command) -> dict[str, Any]:
+    text = command.command.lower()
+    routes = []
+    if any(k in text for k in ["video", "youtube", "instagram", "reel", "content", "ghost"]):
+        routes.append({"department":"Content & Media","agents":["Ghost Mode Agent","Trend Research Agent","Script Agent","Video Agent"]})
+    if any(k in text for k in ["customer", "client", "lead", "business", "sales", "outreach"]):
+        routes.append({"department":"Sales & Business","agents":["Lead Research Agent","Outreach Agent","Conversation Agent","Proposal Agent"]})
+    if any(k in text for k in ["website", "app", "software", "build", "product"]):
+        routes.append({"department":"Product & Development","agents":["Product Manager Agent","Software Builder Agent","QA Agent"]})
+    if any(k in text for k in ["marketing", "seo", "campaign", "brand"]):
+        routes.append({"department":"Marketing & Growth","agents":["Marketing Head Agent","SEO Agent","Analytics Agent"]})
+    if any(k in text for k in ["support", "billing", "finance", "delivery", "onboard"]):
+        routes.append({"department":"Operations & Support","agents":["Customer Success Agent","Billing Agent","Finance Agent"]})
+    if not routes:
+        routes.append({"department":"Executive","agents":["DIMRI CEO"]})
+    return {"accepted":True,"command":command.command,"priority":command.priority,"status":"routed","routes":routes}
+
+@app.get("/api/brain")
+def brain() -> dict[str, Any]:
+    return {
+        "name":"DIMRI Company Brain",
+        "state":"foundation",
+        "layers":["Founder Intent","DIMRI CEO","Department Heads","Specialist Agents","Tools","Memory","Audit"],
+        "principles":["delegate by capability","verify evidence","permission consequential actions","report outcomes"],
+    }
+
 @app.get("/api/company")
 def company() -> dict[str, Any]:
     return {"name":"DIMRI AI","mode":"Founder Controlled","departments":5,"planned_agents":58,"products_services":50,"principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
