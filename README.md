@@ -42,3 +42,22 @@ REAL INFO FIRST: Source → Evidence → Verification → Claim → Script → Q
 5. Ghost Mode source/evidence store
 6. Human approval engine
 7. Observability and production deployment
+
+
+## Business structure
+
+Aishani Enterprises
+→ DIMRI Studio
+→ 1) DIMRI Media
+→ 2) DIMRI Digital Commerce
+→ 3) DIMRI Apps
+→ 4) DIMRI Games
+→ 5) DIMRI Products & Services
+
+Shared across all pillars: DIMRI CEO, Company Brain, persistent memory, task queue, AI workforce, finance, operations, security/compliance, analytics, integrations and founder approvals.
+
+See `docs/AISHANI_ENTERPRISES_STRUCTURE.md` for the full operating map and `docs/DIGITAL_PRODUCT_FACTORY.md` for the digital commerce factory.
+
+## Current integration foundation
+
+The backend exposes `/api/pillars`, `/api/apps`, `/api/integrations`, `/api/marketplaces` and digital-product factory endpoints. Real credentials are supplied through environment secrets; no production secrets are committed.
