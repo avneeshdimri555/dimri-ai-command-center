@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
 from .task_queue import queue
 from .db import audit_events
-from .app_registry import list_apps
+from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
 
@@ -89,6 +89,10 @@ def audit(limit: int = 50) -> dict[str, Any]:
 @app.get("/api/apps")
 def apps() -> dict[str, Any]:
     return {"apps": list_apps()}
+
+@app.get("/api/pillars")
+def pillars() -> dict[str, Any]:
+    return {"parent_company":"Aishani Enterprises","operating_studio":"DIMRI Studio","pillars":list_pillars()}
 
 @app.get("/api/marketplaces")
 def marketplaces() -> dict[str, Any]:
