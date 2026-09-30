@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Any
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
@@ -189,7 +189,7 @@ def youtube_oauth_status() -> dict[str, Any]:
     return oauth_status()
 
 @app.get("/api/youtube/oauth/start")
-def youtube_oauth_start(request):
+def youtube_oauth_start(request: Request):
     from fastapi.responses import RedirectResponse
     try:
         redirect_uri=str(request.base_url).rstrip("/")+"/api/youtube/oauth/callback"
@@ -198,7 +198,7 @@ def youtube_oauth_start(request):
         raise HTTPException(status_code=503,detail=str(exc))
 
 @app.get("/api/youtube/oauth/callback")
-async def youtube_oauth_finish(request):
+async def youtube_oauth_finish(request: Request):
     from fastapi.responses import RedirectResponse
     code=request.query_params.get("code"); state=request.query_params.get("state")
     if request.query_params.get("error"):
