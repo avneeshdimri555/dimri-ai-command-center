@@ -15,6 +15,9 @@ DIMRI AI is being built as an AI-native operating system for a company, not only
 - Sales & Business
 - Product & Development
 - Operations & Support
+- Finance
+- Operations
+- After-Sales & Retention
 
 ## Ghost Mode truth contract
 Ghost Mode must never present invented information as fact.
@@ -56,3 +59,48 @@ Consequential actions remain permissioned, including contracts, production deplo
 8. Observability/audit logs
 9. Real channel integrations
 10. Production deployment
+
+
+## Expanded business back office
+
+### Finance
+Finance is a full department, not one bot:
+- Finance Head
+- Accounting
+- Bookkeeping
+- Invoicing
+- Payment Tracking
+- Cashflow
+- Profit & Loss
+- Budget
+- Financial Reporting
+- Pricing
+- Cost Optimization
+- Tax Preparation Support
+- Finance Audit
+
+AI may analyze and prepare financial work, while money movement and other consequential financial actions require explicit authorization.
+
+### Operations
+Operations is the internal coordination layer:
+- Operations Head
+- Workflow Coordinator
+- Project Operations
+- Scheduling
+- SOP Manager
+- Knowledge Operations
+- Automation Monitor
+- Incident Response
+- Vendor Operations
+- Procurement
+
+### After-Sales & Retention
+After delivery, the company continues the customer lifecycle:
+- After-Sales Service
+- Customer Feedback
+- Retention
+- Renewal
+- Warranty & Support
+
+Lifecycle:
+Lead -> Sale -> Onboarding -> Delivery -> After-Sales -> Renewal -> Expansion
