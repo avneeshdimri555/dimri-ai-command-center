@@ -1,213 +1,172 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIMRI AI | Command Center</title>
+<title>DIMRI AI — Autonomous Company OS</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#f4f6ff;font-family:Arial,sans-serif}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:230px;background:#11182b;padding:25px 16px;border-right:1px solid #26304b}
-.logo{font-size:23px;font-weight:800;color:#8c9cff;margin-bottom:35px}
-.logo span{color:#fff}
-.nav{padding:13px;margin:7px 0;border-radius:10px;color:#aab4d0;cursor:pointer}
-.nav.active,.nav:hover{background:#252f50;color:white}
-.main{padding:30px;width:100%;max-width:1500px;margin:auto}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-h1{font-size:27px;margin:0 0 8px}
-.muted{color:#99a5c3;font-size:14px}
-.pill{background:#153e35;color:#65e7bd;padding:9px 13px;border-radius:20px;font-size:12px}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:28px 0}
-.card{background:#141d33;border:1px solid #273451;border-radius:15px;padding:20px}
-.label{font-size:13px;color:#9aa8c7}
-.value{font-size:28px;font-weight:bold;margin:12px 0 5px}
-.section-title{font-size:19px;margin:28px 0 15px}
-.agents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.agent{background:#141d33;border:1px solid #273451;border-radius:15px;padding:18px}
-.agent-head{display:flex;align-items:center;gap:12px;margin-bottom:15px}
-.avatar{width:43px;height:43px;border-radius:12px;background:#27365c;display:grid;place-items:center;font-size:22px}
-.agent-name{font-weight:bold}
-.status{font-size:12px;color:#65e7bd;margin-top:5px}
-button{border:0;border-radius:9px;background:#6578ef;color:white;padding:12px 16px;font-weight:bold;cursor:pointer}
-button:hover{filter:brightness(1.12)}
-.secondary{background:#293653;color:#e6ebff}
-.task{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #273451;flex-wrap:wrap}
-.task:last-child{border-bottom:0}
-.small{font-size:13px;color:#9aa8c7}
-#message{color:#70e2bd;margin-top:14px;font-size:14px}
-.view{display:none}
-.view.active{display:block}
-.page-header{margin-bottom:18px}
-.empty-state{padding:18px 0 10px;color:#aab4d0}
-.list-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:18px}
-.inline-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.timeline{display:flex;flex-direction:column;gap:12px;margin-top:18px}
-.timeline-item{background:#141d33;border:1px solid #273451;border-radius:12px;padding:16px}
-.timeline-item .time{font-size:12px;color:#8ca0d0;display:block;margin-top:8px}
-.settings-list{display:flex;flex-direction:column;gap:12px;margin-top:18px}
-.setting-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#141d33;border:1px solid #273451;border-radius:12px;padding:16px}
-.switch{position:relative;width:46px;height:26px;background:#273451;border-radius:999px}
-.switch::after{content:"";position:absolute;top:3px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:all .2s ease}
-.switch.on{background:#1c6e5a}
-.switch.on::after{left:22px}
-@media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}.agents{grid-template-columns:repeat(2,1fr)}.list-grid{grid-template-columns:1fr}}
-@media(max-width:560px){.sidebar{width:65px;padding:18px 8px}.logo{font-size:0}.logo:first-letter{font-size:22px}.nav{font-size:0;text-align:center}.nav:first-letter{font-size:18px}.main{padding:17px 12px}.agents{grid-template-columns:1fr}.cards{gap:9px}.card{padding:13px}.value{font-size:23px}h1{font-size:22px}}
+:root{--bg:#070b16;--panel:#0f1628;--panel2:#121c31;--line:#22304a;--text:#f4f7ff;--muted:#8e9bb7;--blue:#6d7cff;--cyan:#39d9ff;--green:#35d39a;--amber:#ffbf69;--pink:#ef71c8;--red:#ff6b7a;--shadow:0 16px 45px rgba(0,0,0,.28)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#15204a 0,#070b16 36%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;width:250px;padding:20px 14px;background:rgba(9,14,27,.94);border-right:1px solid var(--line);backdrop-filter:blur(16px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;padding:7px 10px 24px}.brandmark{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#6d7cff,#39d9ff);font-weight:900;color:#06101c}.brand b{font-size:20px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:2px;letter-spacing:1.4px}
+.nav-title{font-size:10px;color:#566580;text-transform:uppercase;letter-spacing:1.4px;padding:13px 12px 6px}.nav{width:100%;border:0;background:transparent;color:#9eabc5;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;margin:2px 0;display:flex;gap:10px;align-items:center}.nav:hover,.nav.active{background:#18233b;color:white}.nav.active{box-shadow:inset 3px 0 0 var(--cyan)}.nav .ico{width:20px;text-align:center}.sidebar-foot{position:absolute;left:14px;right:14px;bottom:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0c1324}.online{color:var(--green);font-size:11px}.main{width:100%;max-width:1600px;margin:auto;padding:22px 28px 50px}.topbar{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:24px}.crumb{color:var(--muted);font-size:13px}.top-actions{display:flex;align-items:center;gap:10px}.search{background:#0d1527;border:1px solid var(--line);color:white;border-radius:10px;padding:10px 12px;width:230px;outline:none}.badge{border:1px solid #245744;background:#0e2a22;color:#66e4b5;border-radius:999px;padding:8px 11px;font-size:11px}.view{display:none}.view.active{display:block}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:22px}.hero h1{font-size:30px;margin:0 0 6px}.hero p{margin:0;color:var(--muted);max-width:760px}.btn{border:0;border-radius:10px;padding:11px 15px;background:linear-gradient(135deg,#6d7cff,#4e63e8);color:white;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(87,105,240,.2)}.btn:hover{filter:brightness(1.08)}.btn.secondary{background:#1a2640;box-shadow:none}.btn.success{background:#176b53}.btn.warn{background:#75531c}.grid{display:grid;gap:14px}.metrics{grid-template-columns:repeat(6,minmax(0,1fr));margin-bottom:18px}.metric,.panel,.agent,.dept,.lead,.client,.product,.activity,.approval{background:linear-gradient(180deg,rgba(18,28,49,.98),rgba(12,19,34,.98));border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.metric{padding:16px}.metric .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}.metric .num{font-size:27px;font-weight:800;margin:8px 0 3px}.delta{font-size:11px;color:var(--green)}.cols{display:grid;grid-template-columns:1.5fr 1fr;gap:15px}.panel{padding:18px}.panel h2{font-size:16px;margin:0 0 14px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.tiny{font-size:11px;color:var(--muted)}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{font-size:10px;padding:6px 8px;border-radius:999px;background:#18233b;color:#b9c5df;border:1px solid #293754}.chip.green{background:#0e2a22;color:#69e7b9;border-color:#1d5d49}.pipeline{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.stage{padding:11px 7px;border-radius:10px;background:#0d1527;border:1px solid var(--line);text-align:center}.stage b{display:block;font-size:16px}.stage span{font-size:9px;color:var(--muted)}.dept-grid{grid-template-columns:repeat(5,1fr)}.dept{padding:16px;min-height:160px}.dept-icon{font-size:25px}.dept h3{font-size:14px;margin:9px 0 4px}.dept p{font-size:11px;color:var(--muted);min-height:34px}.count{font-size:11px;color:#aebbd5}.bar{height:5px;border-radius:5px;background:#1c2943;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:5px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.agent-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.agent{padding:15px}.agent-top{display:flex;gap:10px;align-items:center}.avatar{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#1b2945}.agent h3{font-size:13px;margin:0}.agent p{font-size:11px;color:var(--muted);margin:8px 0 12px}.status{font-size:10px;color:var(--green)}.ghost{border-color:#4a2d63;background:radial-gradient(circle at 90% 0%,#28173c 0,#0f1628 55%)}.ghost-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.ghost-title{font-size:23px;font-weight:800}.ghost-title span{color:#d98cff}.rule{margin:15px 0;padding:12px;border-radius:10px;background:#191327;border:1px solid #513c67;font-size:11px;color:#e1d4ed}.rule b{color:#fff}.flow{display:flex;align-items:center;gap:6px;overflow:auto;padding:8px 0}.flow .f{min-width:105px;padding:12px 8px;background:#0d1527;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:10px}.arrow{color:#66769a}.content-card{padding:13px;border:1px solid var(--line);background:#0d1527;border-radius:12px}.content-card b{font-size:12px}.content-card p{font-size:10px;color:var(--muted);margin:6px 0}.lead,.client,.product,.approval,.activity{padding:15px}.lead-row,.client-row{display:flex;justify-content:space-between;align-items:center;gap:10px}.lead h3,.client h3,.product h3{font-size:13px;margin:0}.lead p,.client p,.product p{font-size:10px;color:var(--muted);margin:5px 0}.tag{font-size:9px;border-radius:6px;padding:5px 7px;background:#18233b;color:#aebcdb}.tag.hot{background:#3b2418;color:#ffc27d}.tag.done{background:#0d2a22;color:#69e7b9}.list{display:flex;flex-direction:column;gap:9px}.product .numtag{font-size:9px;color:#7181a0}.product h3{margin-top:6px}.product p{min-height:28px}.product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.toolbar input,.toolbar select{background:#0d1527;border:1px solid var(--line);color:white;border-radius:9px;padding:9px 10px;outline:none}.timeline{display:flex;flex-direction:column;gap:9px}.activity{display:flex;gap:12px;align-items:flex-start}.dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);margin-top:5px;box-shadow:0 0 14px rgba(57,217,255,.6)}.activity b{font-size:12px}.activity p{font-size:10px;color:var(--muted);margin:4px 0}.settings{display:flex;flex-direction:column;gap:10px}.setting{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#0d1527;border:1px solid var(--line);border-radius:11px}.switch{width:44px;height:24px;background:#26334e;border-radius:999px;position:relative;cursor:pointer}.switch:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:white;top:3px;left:4px;transition:.2s}.switch.on{background:#1b745a}.switch.on:after{left:22px}.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;place-items:center;z-index:20;padding:20px}.modal.open{display:grid}.modal-card{max-width:560px;width:100%;background:#0e172a;border:1px solid #344564;border-radius:16px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.55)}.modal-card h2{margin-top:0}.close{float:right;background:transparent;color:#9caaca;border:0;font-size:20px;cursor:pointer}.toast{position:fixed;right:20px;bottom:20px;background:#10253a;border:1px solid #2b526d;padding:12px 15px;border-radius:10px;color:#d9f5ff;display:none;z-index:30;font-size:12px}.toast.show{display:block}.footer{margin-top:18px;color:#66748f;font-size:10px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed #31415f;border-radius:12px}
+@media(max-width:1200px){.metrics{grid-template-columns:repeat(3,1fr)}.dept-grid{grid-template-columns:repeat(3,1fr)}.product-grid{grid-template-columns:repeat(3,1fr)}.cols{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.sidebar{width:72px;padding:15px 8px}.brand{justify-content:center}.brand div:last-child,.nav span:not(.ico),.nav-title,.sidebar-foot{display:none}.nav{justify-content:center}.main{padding:16px 12px}.metrics,.dept-grid,.agent-grid,.two,.three,.product-grid{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.search{width:150px}}
+@media(max-width:520px){.metrics,.dept-grid,.agent-grid,.two,.three,.product-grid{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.pipeline{grid-template-columns:repeat(2,1fr)}.top-actions{width:100%}.search{flex:1;width:auto}}
 </style>
 </head>
 <body>
-<div class="layout">
+<div class="app">
 <aside class="sidebar">
-  <div class="logo">D<span>IMRI AI</span></div>
-  <div class="nav active" data-view="dashboard">▦ &nbsp; Dashboard</div>
-  <div class="nav" data-view="agents">◈ &nbsp; AI Agents</div>
-  <div class="nav" data-view="projects">▤ &nbsp; Projects</div>
-  <div class="nav" data-view="approvals">✓ &nbsp; Approvals</div>
-  <div class="nav" data-view="activity">◷ &nbsp; Activity</div>
-  <div class="nav" data-view="settings">⚙ &nbsp; Settings</div>
+  <div class="brand"><div class="brandmark">D</div><div><b>DIMRI AI</b><small>AUTONOMOUS COMPANY OS</small></div></div>
+  <div class="nav-title">Command</div>
+  <button class="nav active" data-view="overview"><span class="ico">◈</span><span>Overview</span></button>
+  <button class="nav" data-view="agents"><span class="ico">◉</span><span>AI Workforce</span></button>
+  <button class="nav" data-view="ghost"><span class="ico">👻</span><span>Ghost Mode</span></button>
+  <div class="nav-title">Business</div>
+  <button class="nav" data-view="growth"><span class="ico">↗</span><span>Growth & Sales</span></button>
+  <button class="nav" data-view="delivery"><span class="ico">◫</span><span>Client Delivery</span></button>
+  <button class="nav" data-view="products"><span class="ico">✦</span><span>Products & Services</span></button>
+  <button class="nav" data-view="projects"><span class="ico">▤</span><span>Projects</span></button>
+  <div class="nav-title">Control</div>
+  <button class="nav" data-view="approvals"><span class="ico">✓</span><span>Approvals</span></button>
+  <button class="nav" data-view="activity"><span class="ico">◷</span><span>Activity</span></button>
+  <button class="nav" data-view="settings"><span class="ico">⚙</span><span>Settings</span></button>
+  <div class="sidebar-foot"><div class="online">● SYSTEM ONLINE</div><div class="tiny" style="margin-top:5px">Founder controlled · Prototype OS</div></div>
 </aside>
 <main class="main">
-  <section class="view active" data-view="dashboard">
-    <div class="top">
-      <div>
-        <h1>Command Center</h1>
-        <div class="muted">Welcome, Avneesh. Your AI workspace is ready.</div>
-      </div>
-      <div class="pill">● Prototype Mode</div>
-    </div>
+<div class="topbar"><div class="crumb">DIMRI AI / <span id="crumb">Overview</span></div><div class="top-actions"><input id="search" class="search" placeholder="Search agents, clients, products…"><span class="badge">● Founder Mode</span></div></div>
 
-    <div class="cards">
-      <div class="card"><div class="label">AI Agents</div><div class="value">6</div><div class="small">Planned agents</div></div>
-      <div class="card"><div class="label">Active Tasks</div><div class="value" id="active">0</div><div class="small">Demo activity</div></div>
-      <div class="card"><div class="label">Projects</div><div class="value">5</div><div class="small">Initial app ideas</div></div>
-      <div class="card"><div class="label">Approvals</div><div class="value" id="approvals">1</div><div class="small">Awaiting review</div></div>
-    </div>
+<section class="view active" data-view="overview">
+<div class="hero"><div><h1>Autonomous Company Command Center</h1><p>One operating layer for AI teams, Ghost Mode media, customer acquisition, client delivery and product growth.</p></div><button class="btn" onclick="openModal('command')">+ New Command</button></div>
+<div class="grid metrics">
+<div class="metric"><div class="label">AI Agents</div><div class="num">58</div><div class="delta">5 departments</div></div>
+<div class="metric"><div class="label">Products / Services</div><div class="num">50</div><div class="delta">portfolio mapped</div></div>
+<div class="metric"><div class="label">Pipeline Leads</div><div class="num" id="leadMetric">125</div><div class="delta">+12 this cycle</div></div>
+<div class="metric"><div class="label">Active Clients</div><div class="num" id="clientMetric">18</div><div class="delta">delivery running</div></div>
+<div class="metric"><div class="label">Content Queue</div><div class="num" id="contentMetric">23</div><div class="delta">Ghost Mode</div></div>
+<div class="metric"><div class="label">Approvals</div><div class="num" id="approvalMetric">4</div><div class="delta">founder review</div></div>
+</div>
+<div class="grid cols">
+<div class="panel"><div class="panel-head"><h2>Company Flywheel</h2><span class="chip green">Continuous</span></div><div class="pipeline">
+<div class="stage"><b>01</b><span>Research</span></div><div class="stage"><b>02</b><span>Create</span></div><div class="stage"><b>03</b><span>Publish</span></div><div class="stage"><b>04</b><span>Acquire</span></div><div class="stage"><b>05</b><span>Convert</span></div><div class="stage"><b>06</b><span>Deliver</span></div><div class="stage"><b>07</b><span>Grow</span></div></div><div style="margin-top:14px" class="chips"><span class="chip">Real-info research</span><span class="chip">Human-feel storytelling</span><span class="chip">Personalized outreach</span><span class="chip">AI service delivery</span><span class="chip">Analytics → next action</span></div></div>
+<div class="panel"><div class="panel-head"><h2>CEO Control Room</h2><span class="tiny">DIMRI CEO</span></div><div class="content-card"><b>Today's operating focus</b><p>Run a Ghost Mode research cycle, qualify new business leads, and move approved client projects through delivery.</p><button class="btn" style="margin-top:7px" onclick="runCycle()">▶ Run AI Cycle</button></div></div>
+</div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Departments</h2><span class="tiny">5 connected heads · 58 specialist agents</span></div><div class="grid dept-grid">
+<div class="dept"><div class="dept-icon">🎬</div><h3>Content & Media</h3><p>Research, stories, video, voice, editing and publishing.</p><div class="count">14 agents</div><div class="bar"><i style="width:82%"></i></div></div>
+<div class="dept"><div class="dept-icon">📣</div><h3>Marketing & Growth</h3><p>SEO, social, campaigns, brand, community and analytics.</p><div class="count">11 agents</div><div class="bar"><i style="width:74%"></i></div></div>
+<div class="dept"><div class="dept-icon">🤝</div><h3>Sales & Business</h3><p>Lead research, outreach, proposals, CRM and partnerships.</p><div class="count">13 agents</div><div class="bar"><i style="width:68%"></i></div></div>
+<div class="dept"><div class="dept-icon">🧩</div><h3>Product & Development</h3><p>Product, UX, software, AI, APIs, QA and deployment.</p><div class="count">12 agents</div><div class="bar"><i style="width:61%"></i></div></div>
+<div class="dept"><div class="dept-icon">⚙️</div><h3>Operations & Support</h3><p>Onboarding, support, finance, compliance and automation.</p><div class="count">8 agents</div><div class="bar"><i style="width:56%"></i></div></div>
+</div></div>
+<div class="grid two" style="margin-top:15px"><div class="panel"><div class="panel-head"><h2>Live Activity</h2><button class="btn secondary" onclick="showView('activity')">View all</button></div><div class="list" id="activityPreview"></div></div><div class="panel"><div class="panel-head"><h2>Founder Approvals</h2><span class="chip">4 pending</span></div><div class="list"><div class="approval"><div class="lead-row"><div><b>Publish Ghost Mode batch</b><div class="tiny">8 researched pieces · YouTube + Instagram</div></div><span class="tag">Review</span></div></div><div class="approval"><div class="lead-row"><div><b>Client proposal · Local Business</b><div class="tiny">Website + content package</div></div><span class="tag hot">Decision</span></div></div></div></div></div>
+<div class="footer">DIMRI AI prototype · Frontend simulation. Real integrations, credentials, publishing and money movement require explicit connected services and permission gates.</div>
+</section>
 
-    <div class="section-title">Your AI Workforce</div>
-    <div class="agents">
-      <div class="agent"><div class="agent-head"><div class="avatar">🧠</div><div><div class="agent-name">DIMRI CEO</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Coordinates tasks and reports to the founder.</div></div>
-      <div class="agent"><div class="agent-head"><div class="avatar">🔎</div><div><div class="agent-name">Research Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Plans market and competitor research.</div></div>
-      <div class="agent"><div class="agent-head"><div class="avatar">📋</div><div><div class="agent-name">Product Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Creates product requirements and features.</div></div>
-      <div class="agent"><div class="agent-head"><div class="avatar">💻</div><div><div class="agent-name">Builder Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Helps build and update app code.</div></div>
-      <div class="agent"><div class="agent-head"><div class="avatar">🧪</div><div><div class="agent-name">QA Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Plans checks and reports test results.</div></div>
-      <div class="agent"><div class="agent-head"><div class="avatar">⚙️</div><div><div class="agent-name">OPS Agent</div><div class="status">● Ready (Demo)</div></div></div><div class="small">Tracks releases and operations.</div></div>
-    </div>
+<section class="view" data-view="agents">
+<div class="hero"><div><h1>AI Workforce</h1><p>One DIMRI CEO coordinates department heads and specialist agents. Work is delegated by capability, not by one overloaded agent.</p></div><button class="btn" onclick="toast('Agent Factory: design queue created')">+ Design Agent</button></div>
+<div class="grid agent-grid" id="agentGrid"></div>
+</section>
 
-    <div class="section-title">Task Center</div>
-    <div class="card">
-      <div class="task"><div><b>Build first prototype</b><div class="small">DIMRI AI · Frontend demo</div></div><span class="pill" id="taskstatus">Ready</span></div>
-      <div class="task"><div><b>Review initial app concepts</b><div class="small">Product planning · Pending</div></div><button class="secondary" onclick="review()">Review</button></div>
-      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-        <button onclick="runTask()">▶ Run Demo Task</button>
-        <button class="secondary" onclick="approve()">✓ Approve Demo</button>
-      </div>
-      <div id="message"></div>
-    </div>
-    <p class="small" style="margin-top:24px">DIMRI AI · Founder-controlled workspace · Frontend prototype only</p>
-  </section>
+<section class="view" data-view="ghost">
+<div class="hero"><div><h1>👻 Ghost Mode</h1><p>Continuous media engine for YouTube, Instagram and other approved channels.</p></div><button class="btn" onclick="runGhost()">▶ Run Ghost Cycle</button></div>
+<div class="panel ghost"><div class="ghost-head"><div><div class="ghost-title">Ghost Mode <span>REAL INFO FIRST</span></div><div class="tiny" style="margin-top:5px">Research → Story → Assets → Edit → Review → Publish → Learn</div></div><span class="chip green">Truth Gate ON</span></div>
+<div class="rule"><b>Reality Rule:</b> factual claims, statistics, news, quotes, product claims and sources must be verified before publication. No invented facts, fake reviews, fake customer stories or fabricated citations. Creative/fictional material must be labeled clearly.</div>
+<div class="flow"><div class="f">🔎 Research<br>real sources</div><span class="arrow">→</span><div class="f">💡 Idea<br>trend + value</div><span class="arrow">→</span><div class="f">✍️ Script<br>human feel</div><span class="arrow">→</span><div class="f">🎨 Assets<br>image/video</div><span class="arrow">→</span><div class="f">✂️ Edit<br>voice + captions</div><span class="arrow">→</span><div class="f">📤 Publish<br>approved channel</div><span class="arrow">→</span><div class="f">📊 Learn<br>analytics</div></div></div>
+<div class="grid two" style="margin-top:15px"><div class="panel"><div class="panel-head"><h2>Content Queue</h2><span class="tiny" id="queueCount">23 queued</span></div><div class="list" id="contentList"></div></div><div class="panel"><div class="panel-head"><h2>Research / Source Gate</h2><span class="chip green">Required</span></div><div class="list"><div class="content-card"><b>Source verification</b><p>Each factual claim receives a source record before it can enter the publish queue.</p><span class="tag done">Enabled</span></div><div class="content-card"><b>Human-feel quality pass</b><p>Checks pacing, specificity, narrative flow and obvious AI artifacts.</p><span class="tag done">Enabled</span></div><div class="content-card"><b>Publish permissions</b><p>Channel credentials and platform actions stay behind explicit integration permissions.</p><span class="tag">Controlled</span></div></div></div></div>
+</section>
 
-  <section class="view" data-view="agents">
-    <div class="page-header">
-      <h1>AI Agents</h1>
-      <div class="muted">Review the workforce assigned to each strategic area.</div>
-    </div>
-    <div class="list-grid">
-      <div class="card"><div class="label">DIMRI CEO</div><div class="value" style="font-size:24px">Lead</div><div class="small">Oversight, approvals, high-level decisions.</div></div>
-      <div class="card"><div class="label">Research Agent</div><div class="value" style="font-size:24px">Queued</div><div class="small">Market scan, positioning, and competitor updates.</div></div>
-      <div class="card"><div class="label">Product Agent</div><div class="value" style="font-size:24px">Focused</div><div class="small">Roadmap planning and product feature design.</div></div>
-      <div class="card"><div class="label">Builder Agent</div><div class="value" style="font-size:24px">Ready</div><div class="small">Build execution and implementation support.</div></div>
-      <div class="card"><div class="label">QA Agent</div><div class="value" style="font-size:24px">Monitoring</div><div class="small">Quality checks and validation passes.</div></div>
-      <div class="card"><div class="label">OPS Agent</div><div class="value" style="font-size:24px">Stable</div><div class="small">Launch and operational health tracking.</div></div>
-    </div>
-  </section>
+<section class="view" data-view="growth">
+<div class="hero"><div><h1>Growth & Sales</h1><p>Find businesses with relevant needs, research them, personalize outreach, qualify conversations and move approved opportunities into delivery.</p></div><button class="btn" onclick="runProspecting()">▶ Run Prospecting</button></div>
+<div class="grid metrics"><div class="metric"><div class="label">Leads</div><div class="num" id="growthLeads">125</div><div class="delta">qualified +12</div></div><div class="metric"><div class="label">Contacted</div><div class="num">74</div><div class="delta">email / social / web</div></div><div class="metric"><div class="label">Replies</div><div class="num">29</div><div class="delta">conversation started</div></div><div class="metric"><div class="label">Qualified</div><div class="num">18</div><div class="delta">needs confirmed</div></div><div class="metric"><div class="label">Proposals</div><div class="num">9</div><div class="delta">awaiting decision</div></div><div class="metric"><div class="label">Clients</div><div class="num">6</div><div class="delta">this pipeline</div></div></div>
+<div class="panel"><div class="panel-head"><h2>Acquisition Rules</h2><span class="chip green">Guardrails active</span></div><div class="chips"><span class="chip">Personalized outreach</span><span class="chip">Rate limits</span><span class="chip">Opt-out handling</span><span class="chip">No impersonation</span><span class="chip">No bulk spam</span><span class="chip">Channel permissions</span><span class="chip">Audit trail</span></div></div>
+<div class="grid two" style="margin-top:15px"><div class="panel"><div class="panel-head"><h2>Priority Leads</h2><span class="tiny">sample CRM view</span></div><div class="list" id="leadList"></div></div><div class="panel"><div class="panel-head"><h2>Acquisition Workflow</h2></div><div class="flow" style="flex-wrap:wrap"><div class="f">Find</div><span class="arrow">→</span><div class="f">Research</div><span class="arrow">→</span><div class="f">Personalize</div><span class="arrow">→</span><div class="f">Contact</div><span class="arrow">→</span><div class="f">Qualify</div><span class="arrow">→</span><div class="f">Proposal</div><span class="arrow">→</span><div class="f">Onboard</div></div><div class="rule" style="margin-top:12px">Automation does not override platform rules, consent requirements, anti-spam laws, contracts or founder approval for consequential commitments.</div></div></div>
+</section>
 
-  <section class="view" data-view="projects">
-    <div class="page-header">
-      <h1>Projects</h1>
-      <div class="muted">Core initiatives and strategic product tracks.</div>
-    </div>
-    <div class="list-grid">
-      <div class="card"><div class="label">Project A</div><div class="value" style="font-size:24px">Launch</div><div class="small">Founder-facing AI command center prototype.</div></div>
-      <div class="card"><div class="label">Project B</div><div class="value" style="font-size:24px">Discovery</div><div class="small">Research and benchmarking for AI channels.</div></div>
-      <div class="card"><div class="label">Project C</div><div class="value" style="font-size:24px">Planning</div><div class="small">Feature suite and product backlog curation.</div></div>
-      <div class="card"><div class="label">Project D</div><div class="value" style="font-size:24px">Ops</div><div class="small">Release templates and operational readiness.</div></div>
-    </div>
-  </section>
+<section class="view" data-view="delivery">
+<div class="hero"><div><h1>Client Delivery</h1><p>Turn an approved customer request into a coordinated AI production pipeline.</p></div><button class="btn" onclick="openModal('client')">+ New Client</button></div>
+<div class="grid three" id="clientList"></div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Delivery Pipeline</h2><span class="tiny">Intake → Build → QA → Client Review → Handoff</span></div><div class="pipeline"><div class="stage"><b>4</b><span>Intake</span></div><div class="stage"><b>6</b><span>Research</span></div><div class="stage"><b>8</b><span>Production</span></div><div class="stage"><b>5</b><span>QA</span></div><div class="stage"><b>3</b><span>Client Review</span></div><div class="stage"><b>7</b><span>Delivery</span></div><div class="stage"><b>12</b><span>Support</span></div></div></div>
+</section>
 
-  <section class="view" data-view="approvals">
-    <div class="page-header">
-      <h1>Approvals</h1>
-      <div class="muted">Pending decisions requiring founder review.</div>
-    </div>
-    <div class="card">
-      <div class="task"><div><b>Prototype approval</b><div class="small">Approver: DIMRI CEO · 12 mins ago</div></div><span class="pill">Awaiting</span></div>
-      <div class="task"><div><b>Market research brief</b><div class="small">Approver: Founder · Ready to review</div></div><button class="secondary" onclick="approve()">Approve</button></div>
-      <div class="task"><div><b>Launch checklist</b><div class="small">Approver: Ops lead · Reviewed</div></div><span class="small">Approved</span></div>
-    </div>
-  </section>
+<section class="view" data-view="products">
+<div class="hero"><div><h1>Products & Services</h1><p>50 mapped offers across creator tools, marketing, sales, SMB services and creative products.</p></div><button class="btn" onclick="toast('Product Factory: new product brief queued')">+ New Product</button></div>
+<div class="toolbar"><input id="productSearch" placeholder="Filter products…"><select id="productCat"><option value="all">All categories</option><option>Content / Creator</option><option>Marketing</option><option>Sales / Business</option><option>SMB Services</option><option>Creative / Personal</option></select></div>
+<div class="grid product-grid" id="productGrid"></div>
+</section>
 
-  <section class="view" data-view="activity">
-    <div class="page-header">
-      <h1>Activity</h1>
-      <div class="muted">Recent motion across the AI workforce.</div>
-    </div>
-    <div class="timeline">
-      <div class="timeline-item"><strong>Builder Agent</strong> updated the frontend prototype.<span class="time">10:42 AM</span></div>
-      <div class="timeline-item"><strong>Research Agent</strong> queued competitor scan and market notes.<span class="time">9:18 AM</span></div>
-      <div class="timeline-item"><strong>QA Agent</strong> completed validation review for the demo page.<span class="time">8:55 AM</span></div>
-      <div class="timeline-item"><strong>DIMRI CEO</strong> approved the onboarding board summary.<span class="time">7:30 AM</span></div>
-    </div>
-  </section>
+<section class="view" data-view="projects">
+<div class="hero"><div><h1>Projects</h1><p>Strategic programs that turn the DIMRI AI concept into a working company OS.</p></div><button class="btn" onclick="toast('Project created in planning queue')">+ New Project</button></div>
+<div class="grid two"><div class="project panel"><div class="panel-head"><h2>DIMRI AI Command Center</h2><span class="tag done">Building</span></div><p class="tiny">Central operating layer for agents, workflows, approvals and business metrics.</p><div class="bar"><i style="width:38%"></i></div><div class="tiny" style="margin-top:7px">Prototype foundation · 38%</div></div><div class="project panel"><div class="panel-head"><h2>Ghost Mode Engine</h2><span class="tag">Architecture</span></div><p class="tiny">Research truth gate, content pipeline, media generation and channel publishing.</p><div class="bar"><i style="width:24%"></i></div><div class="tiny" style="margin-top:7px">Integration-ready design · 24%</div></div><div class="project panel"><div class="panel-head"><h2>AI Business Acquisition</h2><span class="tag">Planning</span></div><p class="tiny">Lead discovery, qualification, outreach, CRM and proposal workflows.</p><div class="bar"><i style="width:18%"></i></div><div class="tiny" style="margin-top:7px">Workflow specification · 18%</div></div><div class="project panel"><div class="panel-head"><h2>Service Delivery Factory</h2><span class="tag">Planning</span></div><p class="tiny">Website, creative, video, marketing and support delivery orchestration.</p><div class="bar"><i style="width:14%"></i></div><div class="tiny" style="margin-top:7px">Service blueprints · 14%</div></div></div>
+</section>
 
-  <section class="view" data-view="settings">
-    <div class="page-header">
-      <h1>Settings</h1>
-      <div class="muted">Workspace control options for the prototype.</div>
-    </div>
-    <div class="settings-list">
-      <div class="setting-row"><span>Auto-approve demo tasks</span><div class="switch on" aria-label="Auto-approve demo tasks"></div></div>
-      <div class="setting-row"><span>Email notifications</span><div class="switch on" aria-label="Email notifications"></div></div>
-      <div class="setting-row"><span>Agent collaboration mode</span><div class="switch" aria-label="Agent collaboration mode"></div></div>
-      <div class="setting-row"><span>Activity summary digest</span><div class="switch on" aria-label="Activity summary digest"></div></div>
-    </div>
-  </section>
+<section class="view" data-view="approvals">
+<div class="hero"><div><h1>Approvals</h1><p>Founder-controlled gates for publishing, spending, contracts, credentials and consequential business actions.</p></div></div>
+<div class="list" id="approvalList"></div>
+</section>
+
+<section class="view" data-view="activity">
+<div class="hero"><div><h1>Activity</h1><p>Auditable timeline across the AI workforce and company workflows.</p></div><button class="btn secondary" onclick="clearActivity()">Clear demo events</button></div>
+<div class="timeline" id="activityList"></div>
+</section>
+
+<section class="view" data-view="settings">
+<div class="hero"><div><h1>Settings</h1><p>Control autonomy, integrations, notifications and safety gates.</p></div></div>
+<div class="grid two"><div class="panel"><h2>Autonomy Controls</h2><div class="settings">
+<div class="setting"><div><b>Agent collaboration</b><div class="tiny">Allow agents to delegate between departments</div></div><div class="switch on"></div></div>
+<div class="setting"><div><b>Ghost Mode research gate</b><div class="tiny">Require source verification for factual claims</div></div><div class="switch on"></div></div>
+<div class="setting"><div><b>Auto-publish</b><div class="tiny">Only enable after channel integration + approval policy</div></div><div class="switch"></div></div>
+<div class="setting"><div><b>Automated outreach</b><div class="tiny">Requires channel permissions, rate limits and opt-out handling</div></div><div class="switch on"></div></div></div></div>
+<div class="panel"><h2>System</h2><div class="settings">
+<div class="setting"><div><b>Model Gateway</b><div class="tiny">Provider routing and usage limits</div></div><span class="tag done">Ready</span></div>
+<div class="setting"><div><b>Audit Log</b><div class="tiny">Actions, approvals and agent handoffs</div></div><span class="tag done">Ready</span></div>
+<div class="setting"><div><b>Credential Vault</b><div class="tiny">Connectors should use scoped secrets</div></div><span class="tag">Integration</span></div>
+<div class="setting"><div><b>Production Deployments</b><div class="tiny">Founder approval gate</div></div><span class="tag hot">Protected</span></div></div></div></div>
+</section>
 </main>
 </div>
+
+<div class="modal" id="modal"><div class="modal-card"><button class="close" onclick="closeModal()">×</button><h2 id="modalTitle">New Command</h2><p class="tiny" id="modalText"></p><input id="modalInput" class="search" style="width:100%;margin:12px 0" placeholder="Describe the task…"><button class="btn" onclick="submitModal()">Create workflow</button></div></div>
+<div class="toast" id="toast"></div>
 <script>
-const navButtons = document.querySelectorAll('.nav');
-const views = document.querySelectorAll('.view');
-
-function showView(viewName) {
-  navButtons.forEach((button) => {
-    const isActive = button.dataset.view === viewName;
-    button.classList.toggle('active', isActive);
-  });
-
-  views.forEach((view) => {
-    const isActive = view.dataset.view === viewName;
-    view.classList.toggle('active', isActive);
-  });
-}
-
-navButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    showView(button.dataset.view);
-  });
-});
-
-function runTask(){
- document.getElementById('active').textContent='1';
- document.getElementById('taskstatus').textContent='Demo Running';
- document.getElementById('message').textContent='Demo task started. No real AI agent is connected yet.';
-}
-function approve(){
- document.getElementById('approvals').textContent='0';
- document.getElementById('message').textContent='Demo approval recorded locally. No production action was taken.';
-}
-function review(){
- document.getElementById('message').textContent='Review screen will be connected in a later step.';
-}
+const state={view:'overview',activities:[
+['DIMRI CEO','Company operating plan synchronized.','Just now'],['Ghost Mode Agent','Truth gate checked 8 queued content items.','6 min ago'],['Lead Research Agent','Added 12 qualified business opportunities.','18 min ago'],['Builder Agent','Updated Command Center prototype.','32 min ago'],['QA Agent','Completed frontend validation pass.','45 min ago']],content:[
+['AI tools for small businesses: what changed','Research ready','Real sources required'],['Behind the scenes: a micro-factory story','Script ready','Creative / clearly labeled'],['How product photography is changing','Research ready','Real sources required'],['Local business marketing checklist','Editing','Evidence-backed'],['Satisfying craft process — visual story','Assets ready','Creative'] ],
+leads:[['Local restaurant','Website + social content','Hot'],['D2C beauty brand','Product photography + ads','Hot'],['Real estate consultant','Short-form video system','Warm'],['Local salon','Google profile + reels','Warm'],['E-commerce seller','Listing optimization','New']],
+clients:[['Local Business Growth','Website + social package','Production','72%'],['D2C Product Launch','AI product visuals + ads','QA','86%'],['Real Estate Content','Reels + listing videos','Client Review','91%'],['Restaurant Marketing','Menu + content engine','Production','54%'],['Creator Brand','Thumbnail + Shorts system','Intake','22%'],['SaaS Launch','UGC + landing page','Research','38%']]
+};
+const agents=[
+['🧠','DIMRI CEO','Executive Orchestrator','Strategy, delegation, reporting','Executive'],['🔎','Trend Research Agent','Content & Media','Real-info trend and source research','Content & Media'],['💡','Idea Agent','Content & Media','Ideas from evidence, trends and audience needs','Content & Media'],['✍️','Script Agent','Content & Media','Human-feel scripts with source notes','Content & Media'],['👻','Ghost Mode Agent','Content & Media','Runs the end-to-end media workflow','Content & Media'],['🎨','Image Agent','Content & Media','Creative assets and visual direction','Content & Media'],['🎬','Video Agent','Content & Media','Video generation and shot planning','Content & Media'],['🎙️','Voice & Editing Agent','Content & Media','Voice, edit, captions and pacing','Content & Media'],['📤','YouTube Agent','Content & Media','Channel packaging and publishing workflow','Content & Media'],['📱','Instagram Agent','Content & Media','Reels packaging and publishing workflow','Content & Media'],['📣','Marketing Head Agent','Marketing & Growth','Growth strategy and campaign coordination','Marketing & Growth'],['📈','SEO Agent','Marketing & Growth','Search visibility and content optimization','Marketing & Growth'],['📢','Ads Agent','Marketing & Growth','Creative testing and campaign operations','Marketing & Growth'],['🤝','Community Agent','Marketing & Growth','Audience engagement and feedback loops','Marketing & Growth'],['📊','Analytics Agent','Marketing & Growth','Performance analysis and next actions','Marketing & Growth'],['🧲','Lead Research Agent','Sales & Business','Find and qualify relevant businesses','Sales & Business'],['✉️','Outreach Agent','Sales & Business','Personalized email/web outreach','Sales & Business'],['💬','Conversation Agent','Sales & Business','Qualify needs and route conversations','Sales & Business'],['📝','Proposal Agent','Sales & Business','Create scoped proposals and packages','Sales & Business'],['🔁','Follow-up Agent','Sales & Business','Manage approved follow-up sequences','Sales & Business'],['🗂️','CRM Agent','Sales & Business','Pipeline, notes and opportunity state','Sales & Business'],['🧩','Product Manager Agent','Product & Development','Requirements, roadmap and prioritization','Product & Development'],['🎨','UX/UI Agent','Product & Development','Interface and experience design','Product & Development'],['💻','Software Builder Agent','Product & Development','Frontend/backend implementation','Product & Development'],['🤖','AI Engineer Agent','Product & Development','Agent workflows and model integration','Product & Development'],['🔌','API Integration Agent','Product & Development','External service connectors','Product & Development'],['🧪','QA Agent','Product & Development','Testing and regression checks','Product & Development'],['🚀','Deployment Agent','Product & Development','Release automation and environments','Product & Development'],['🛠️','Customer Success Agent','Operations & Support','Onboarding, outcomes and retention','Operations & Support'],['🎧','Support Agent','Operations & Support','Customer questions and issue routing','Operations & Support'],['💳','Billing Agent','Operations & Support','Invoices, plans and billing workflows','Operations & Support'],['💰','Finance Agent','Operations & Support','Revenue/cost reporting and controls','Operations & Support'],['🛡️','Compliance Agent','Operations & Support','Policy, privacy and operational checks','Operations & Support'],['📚','Knowledge Agent','Operations & Support','Company memory and SOPs','Operations & Support'],['⚙️','Automation Monitor','Operations & Support','Workflow health and failures','Operations & Support'],['🏭','Agent Factory','Product & Development','Design and test new specialist agents','Product & Development'],['🔐','Security Agent','Product & Development','Least privilege and security checks','Product & Development'],['🧠','Research QA Agent','Operations & Support','Source quality and evidence checks','Operations & Support'],['📦','Delivery Coordinator','Operations & Support','Route client work through production','Operations & Support']];
+const products=[
+['AI UGC Ad Studio','Content / Creator'],['AI Product Photography Studio','Content / Creator'],['AI Video Creator','Content / Creator'],['AI Shorts/Reels Factory','Content / Creator'],['Ghost Mode Content Studio','Content / Creator'],['AI Spokesperson','Content / Creator'],['AI Dubbing & Localization','Content / Creator'],['AI Podcast Repurposer','Content / Creator'],['Faceless Channel Copilot','Content / Creator'],['AI Thumbnail Studio','Content / Creator'],
+['AI Social Media Manager','Marketing'],['AI Campaign Builder','Marketing'],['AI Creative Generator','Marketing'],['AI SEO Studio','Marketing'],['AI Brand Manager','Marketing'],['AI Influencer Manager','Marketing'],['AI Content Calendar','Marketing'],['AI Trend Hunter','Marketing'],['AI Competitor Intelligence','Marketing'],['AI Review Manager','Marketing'],
+['AI Lead Finder','Sales / Business'],['AI Sales Outreach','Sales / Business'],['AI Proposal Generator','Sales / Business'],['AI CRM Agent','Sales / Business'],['AI Follow-up Agent','Sales / Business'],['AI WhatsApp Business Agent','Sales / Business'],['AI Email Sales Agent','Sales / Business'],['AI Appointment Setter','Sales / Business'],['AI Partnership Finder','Sales / Business'],['AI Business Dev Agent','Sales / Business'],
+['AI Restaurant Marketing','SMB Services'],['AI Real Estate Marketing','SMB Services'],['AI Local Business Growth','SMB Services'],['AI E-commerce Optimizer','SMB Services'],['AI Google Profile Manager','SMB Services'],['AI Website Builder','SMB Services'],['AI Conversion Optimizer','SMB Services'],['AI Digital Menu Builder','SMB Services'],['AI Salon/Beauty Studio','SMB Services'],['AI Clinic Marketing','SMB Services'],
+['AI Storybook Creator','Creative / Personal'],['AI Greeting Video Maker','Creative / Personal'],['AI Music Visualizer','Creative / Personal'],['AI Virtual Fashion Studio','Creative / Personal'],['AI Beauty Preview','Creative / Personal'],['AI Interior Redesign','Creative / Personal'],['AI Course Creator','Creative / Personal'],['AI Learning Companion','Creative / Personal'],['AI Interview Practice','Creative / Personal'],['AI Sales Roleplay Coach','Creative / Personal']];
+function $(id){return document.getElementById(id)}
+function showView(name){state.view=name;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===name));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));$('crumb').textContent=name.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showView(n.dataset.view));
+function renderAgents(){ $('agentGrid').innerHTML=agents.map(a=>'<div class="agent"><div class="agent-top"><div class="avatar">'+a[0]+'</div><div><h3>'+a[1]+'</h3><div class="status">● Ready / routed</div></div></div><p>'+a[3]+'</p><span class="tag">'+a[4]+'</span></div>').join('') }
+function renderProducts(){let q=($('productSearch').value||'').toLowerCase(),cat=$('productCat').value;let arr=products.filter(p=>(cat==='all'||p[1]===cat)&&p[0].toLowerCase().includes(q));$('productGrid').innerHTML=arr.map((p,i)=>'<div class="product"><span class="numtag">#'+(products.indexOf(p)+1)+' · '+p[1]+'</span><h3>'+p[0]+'</h3><p>AI-powered product/service blueprint ready for discovery.</p><span class="tag">Mapped</span></div>').join('')||'<div class="empty">No matching products.</div>'}
+function renderLeads(){ $('leadList').innerHTML=state.leads.map(l=>'<div class="lead"><div class="lead-row"><div><h3>'+l[0]+'</h3><p>'+l[1]+'</p></div><span class="tag '+(l[2]==='Hot'?'hot':'')+'">'+l[2]+'</span></div></div>').join('') }
+function renderClients(){ $('clientList').innerHTML=state.clients.map(c=>'<div class="client"><div class="client-row"><div><h3>'+c[0]+'</h3><p>'+c[1]+'</p></div><span class="tag">'+c[2]+'</span></div><div class="bar" style="margin-top:12px"><i style="width:'+c[3]+'"></i></div><div class="tiny" style="margin-top:6px">'+c[3]+' complete</div></div>').join('') }
+function renderContent(){ $('contentList').innerHTML=state.content.map(c=>'<div class="content-card"><div class="lead-row"><div><b>'+c[0]+'</b><p>'+c[1]+'</p></div><span class="tag">'+c[2]+'</span></div></div>').join('');$('queueCount').textContent=state.content.length+' queued';$('contentMetric').textContent=state.content.length}
+function renderActivity(){ $('activityList').innerHTML=state.activities.map(a=>'<div class="activity"><div class="dot"></div><div><b>'+a[0]+'</b><p>'+a[1]+'</p><span class="tiny">'+a[2]+'</span></div></div>').join('');$('activityPreview').innerHTML=state.activities.slice(0,4).map(a=>'<div class="content-card"><b>'+a[0]+'</b><p>'+a[1]+'</p><span class="tiny">'+a[2]+'</span></div>').join('') }
+function renderApprovals(){let items=['Publish Ghost Mode batch','Approve new client proposal','Connect YouTube publishing integration','Enable production deployment'];$('approvalList').innerHTML=items.map((x,i)=>'<div class="approval"><div class="lead-row"><div><b>'+x+'</b><p class="tiny">Founder gate · consequential action</p></div><button class="btn secondary" onclick="approveItem('+i+')">Review</button></div></div>').join('')}
+function addActivity(who,msg){state.activities.unshift([who,msg,'Just now']);renderActivity()}
+function toast(msg){let t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function runCycle(){addActivity('DIMRI CEO','Started coordinated company AI cycle.');toast('AI cycle started: research → growth → delivery')}
+function runGhost(){state.content.unshift(['New evidence-backed topic queued','Research running','Source verification required']);addActivity('Ghost Mode Agent','Started research-first content cycle.');renderContent();toast('Ghost Mode cycle started')}
+function runProspecting(){state.leads.unshift(['New qualified prospect','Need discovery pending','New']);$('leadMetric').textContent=125+1;$('growthLeads').textContent=126;addActivity('Lead Research Agent','Added a new qualified prospect to CRM.');renderLeads();toast('Prospecting cycle added a demo lead')}
+function approveItem(i){addActivity('Founder','Reviewed approval item #'+(i+1)+' in prototype mode.');$('approvalMetric').textContent=Math.max(0,Number($('approvalMetric').textContent)-1);toast('Demo approval recorded — no production action')}
+function clearActivity(){state.activities=[];renderActivity();toast('Demo activity cleared')}
+function openModal(type){$('modal').classList.add('open');$('modalInput').value='';$('modalTitle').textContent=type==='client'?'New Client':'New Company Command';$('modalText').textContent=type==='client'?'Describe the client, service and desired outcome.':'Tell DIMRI what you want the company to accomplish.';$('modalInput').focus()}
+function closeModal(){$('modal').classList.remove('open')}
+function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addActivity('DIMRI CEO','Created workflow: '+v);closeModal();toast('Workflow created in prototype queue')}
+document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
+$('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
+$('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products')});
+renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();
 </script>
 </body>
 </html>
