@@ -6,6 +6,9 @@ from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
 from .task_queue import queue
 from .db import audit_events
+from .app_registry import list_apps
+from .digital_products import create_product, list_products, publish_plan
+from .marketplaces import marketplace_status
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -22,6 +25,15 @@ class Workflow(BaseModel):
 class TaskUpdate(BaseModel):
     status: str
     result: str | None = None
+
+class DigitalProduct(BaseModel):
+    title: str
+    product_type: str = "digital-sticker"
+    description: str = ""
+    price: float | None = None
+    currency: str = "USD"
+    asset_path: str | None = None
+    marketplaces: str = "gumroad"
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
@@ -73,6 +85,29 @@ def get_memory() -> dict[str, Any]:
 @app.get("/api/audit")
 def audit(limit: int = 50) -> dict[str, Any]:
     return {"events": audit_events(limit)}
+
+@app.get("/api/apps")
+def apps() -> dict[str, Any]:
+    return {"apps": list_apps()}
+
+@app.get("/api/marketplaces")
+def marketplaces() -> dict[str, Any]:
+    return {"marketplaces": marketplace_status()}
+
+@app.get("/api/digital-products")
+def digital_products() -> dict[str, Any]:
+    return {"products": list_products()}
+
+@app.post("/api/digital-products")
+def digital_product_create(product: DigitalProduct) -> dict[str, Any]:
+    return create_product(**product.model_dump())
+
+@app.post("/api/digital-products/{product_id}/publish-plan")
+def digital_product_publish_plan(product_id: str) -> dict[str, Any]:
+    result = publish_plan(product_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Digital product not found")
+    return result
 
 @app.get("/api/company")
 def company() -> dict[str, Any]:
