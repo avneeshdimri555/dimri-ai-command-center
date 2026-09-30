@@ -3,3 +3,5 @@ uvicorn[standard]
 pydantic
 openai-agents
 httpx
+google-auth-oauthlib
+cryptography
