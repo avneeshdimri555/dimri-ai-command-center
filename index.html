@@ -32,6 +32,7 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
   <button class="nav" data-view="operations"><span class="ico">⚙</span><span>Operations</span></button>
   <button class="nav" data-view="products"><span class="ico">✦</span><span>Products & Services</span></button>
   <button class="nav" data-view="projects"><span class="ico">▤</span><span>Projects</span></button>
+  <button class="nav" data-view="factory"><span class="ico">🛍️</span><span>Digital Factory</span></button>
   <div class="nav-title">Control</div>
   <button class="nav" data-view="approvals"><span class="ico">✓</span><span>Approvals</span></button>
   <button class="nav" data-view="activity"><span class="ico">◷</span><span>Activity</span></button>
@@ -208,6 +209,22 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
 <div class="grid two"><div class="project panel"><div class="panel-head"><h2>DIMRI AI Command Center</h2><span class="tag done">Building</span></div><p class="tiny">Central operating layer for agents, workflows, approvals and business metrics.</p><div class="bar"><i style="width:38%"></i></div><div class="tiny" style="margin-top:7px">Prototype foundation · 38%</div></div><div class="project panel"><div class="panel-head"><h2>Ghost Mode Engine</h2><span class="tag">Architecture</span></div><p class="tiny">Research truth gate, content pipeline, media generation and channel publishing.</p><div class="bar"><i style="width:24%"></i></div><div class="tiny" style="margin-top:7px">Integration-ready design · 24%</div></div><div class="project panel"><div class="panel-head"><h2>AI Business Acquisition</h2><span class="tag">Planning</span></div><p class="tiny">Lead discovery, qualification, outreach, CRM and proposal workflows.</p><div class="bar"><i style="width:18%"></i></div><div class="tiny" style="margin-top:7px">Workflow specification · 18%</div></div><div class="project panel"><div class="panel-head"><h2>Service Delivery Factory</h2><span class="tag">Planning</span></div><p class="tiny">Website, creative, video, marketing and support delivery orchestration.</p><div class="bar"><i style="width:14%"></i></div><div class="tiny" style="margin-top:7px">Service blueprints · 14%</div></div></div>
 </section>
 
+<section class="view" data-view="factory">
+<div class="hero"><div><h1>🛍️ Digital Product Factory</h1><p>Build digital products and stickers, package them, QA them, and prepare marketplace listings.</p></div><button class="btn" onclick="createDigitalProduct()">+ Create Product</button></div>
+<div class="grid three">
+<div class="panel"><div class="panel-head"><h2>Product Pipeline</h2><span class="chip green">Factory</span></div><div class="flow" style="flex-wrap:wrap"><div class="f">💡 Idea</div><span class="arrow">→</span><div class="f">🎨 Create</div><span class="arrow">→</span><div class="f">📦 Package</div><span class="arrow">→</span><div class="f">🧪 QA</div><span class="arrow">→</span><div class="f">🛒 List</div><span class="arrow">→</span><div class="f">📈 Analyze</div></div></div>
+<div class="panel"><div class="panel-head"><h2>Marketplaces</h2><span class="tiny">Approval gated</span></div><div id="marketplaceStatus" class="list"><div class="content-card"><b>Gumroad</b><p>Adapter ready · token required</p></div><div class="content-card"><b>eBay</b><p>Sell API adapter · OAuth required</p></div><div class="content-card"><b>Shopify</b><p>Store connector · Admin API required</p></div></div></div>
+<div class="panel"><div class="panel-head"><h2>External Agent</h2><span class="chip">N-Setup / Product Agent</span></div><div class="content-card"><b>Agent handoff</b><p>Connect your existing digital-product/sticker agent through the controlled webhook contract.</p><span class="tag">DIGITAL_PRODUCT_AGENT_WEBHOOK</span></div></div>
+</div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Your AI Apps</h2><span class="tiny">Portfolio connected to Product Department</span></div><div class="grid three" id="appPortfolio">
+<div class="product"><span class="numtag">AI APP · BUILDING</span><h3>VANI</h3><p>AI voice/language companion.</p><span class="tag done">Building</span></div>
+<div class="product"><span class="numtag">AI APP · PLANNED</span><h3>DermaVeda</h3><p>AI skin/face analysis and personalized skincare.</p><span class="tag">Planned</span></div>
+<div class="product"><span class="numtag">AI APP · PLANNED</span><h3>YOU AI</h3><p>Personal AI assistant / consumer AI concept.</p><span class="tag">Planned</span></div>
+</div></div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Digital Product Queue</h2><span class="tiny" id="factoryCount">0 products</span></div><div id="digitalProductList" class="list"><div class="empty">No products yet. Create the first factory brief.</div></div></div>
+<div class="footer">The factory can automate creation and listing preparation. Publishing to external marketplaces remains an explicit founder approval action.</div>
+</section>
+
 <section class="view" data-view="approvals">
 <div class="hero"><div><h1>Approvals</h1><p>Founder-controlled gates for publishing, spending, contracts, credentials and consequential business actions.</p></div></div>
 <div class="list" id="approvalList"></div>
@@ -275,7 +292,12 @@ function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addAct
 document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
 $('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
 $('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products')});
-renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();
+renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();loadFactory();
+
+async function createDigitalProduct(){
+ const title=prompt('Product title','Cute Sticker Pack Vol. 01'); if(!title)return;
+ try{const r=await fetch('http://localhost:8000/api/digital-products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,product_type:'digital-sticker-pack',description:'Factory-generated digital sticker pack',price:4.99,currency:'USD',marketplaces:'gumroad,ebay'})}); const d=await r.json(); addActivity('Digital Product Agent','Created factory draft: '+d.title); toast('Digital product draft created'); loadFactory();}catch(e){toast('Start backend to create factory products')}}
+async function loadFactory(){try{const [a,m,p]=await Promise.all([fetch('http://localhost:8000/api/apps'),fetch('http://localhost:8000/api/marketplaces'),fetch('http://localhost:8000/api/digital-products')]);const apps=await a.json(), markets=await m.json(), products=await p.json();$('appPortfolio').innerHTML=apps.apps.map(x=>'<div class="product"><span class="numtag">'+x.type.toUpperCase()+' · '+x.status.toUpperCase()+'</span><h3>'+x.name+'</h3><p>'+x.description+'</p><span class="tag">'+x.status+'</span></div>').join('');$('marketplaceStatus').innerHTML=markets.marketplaces.map(x=>'<div class="content-card"><div class="lead-row"><div><b>'+x.marketplace+'</b><p>'+x.mode+'</p></div><span class="tag '+(x.configured?'done':'')+'">'+(x.configured?'Connected':'Needs setup')+'</span></div></div>').join('');$('factoryCount').textContent=products.products.length+' products';$('digitalProductList').innerHTML=products.products.length?products.products.map(x=>'<div class="content-card"><div class="lead-row"><div><b>'+x.title+'</b><p>'+x.product_type+' · '+(x.price??'')+' '+x.currency+' · '+x.target_marketplaces+'</p></div><span class="tag">'+x.status+'</span></div></div>').join(''):'<div class="empty">No products yet. Create the first factory brief.</div>';}catch(e){}}
 </script>
 </body>
 </html>
