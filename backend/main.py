@@ -10,6 +10,7 @@ from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
 from .integrations import integration_status
+from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -26,6 +27,23 @@ class Workflow(BaseModel):
 class TaskUpdate(BaseModel):
     status: str
     result: str | None = None
+
+class YouTubeChannel(BaseModel):
+    name: str
+    handle: str = ""
+    channel_url: str = ""
+
+class YouTubeContent(BaseModel):
+    channel_id: str | None = None
+    content_type: str = "short"
+    topic: str
+    title: str
+    description: str = ""
+    script: str = ""
+    visual_prompt: str = ""
+
+class YouTubeContentUpdate(BaseModel):
+    status: str
 
 class DigitalProduct(BaseModel):
     title: str
@@ -124,3 +142,42 @@ def company() -> dict[str, Any]:
         "platforms":["web","mobile","telegram"],
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
+
+
+@app.get("/api/youtube/status")
+def youtube_status() -> dict[str, Any]:
+    channels = list_channels()
+    return {"workspace": "ready", "oauth_configured": False, "channel_count": len(channels),
+            "note": "Channels are manual registry entries until Google OAuth is implemented and authorized."}
+
+@app.get("/api/youtube/channels")
+def youtube_channels() -> dict[str, Any]:
+    return {"channels": list_channels()}
+
+@app.post("/api/youtube/channels")
+def youtube_add_channel(channel: YouTubeChannel) -> dict[str, Any]:
+    try:
+        return {"channel": add_channel(**channel.model_dump())}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+@app.get("/api/youtube/content")
+def youtube_content() -> dict[str, Any]:
+    return {"content": list_content()}
+
+@app.post("/api/youtube/content")
+def youtube_create_content(content: YouTubeContent) -> dict[str, Any]:
+    try:
+        return {"content": create_content(**content.model_dump())}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+@app.patch("/api/youtube/content/{content_id}")
+def youtube_update_content(content_id: str, update: YouTubeContentUpdate) -> dict[str, Any]:
+    try:
+        result = update_content(content_id, update.status)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    if not result:
+        raise HTTPException(status_code=404, detail="Content not found")
+    return {"content": result}
