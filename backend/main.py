@@ -23,7 +23,29 @@ AGENTS = [
     {"id":"renewal","name":"Renewal Agent","department":"After-Sales & Retention","status":"ready"},
     {"id":"feedback","name":"Customer Feedback Agent","department":"After-Sales & Retention","status":"ready"},
     {"id":"warranty","name":"Warranty & Support Agent","department":"After-Sales & Retention","status":"ready"},
-    {"id":"finance","name":"Finance Agent","department":"Operations & Support","status":"ready"},
+    {"id":"finance","name":"Finance Head Agent","department":"Finance","status":"ready"},
+    {"id":"accounting","name":"Accounting Agent","department":"Finance","status":"ready"},
+    {"id":"bookkeeping","name":"Bookkeeping Agent","department":"Finance","status":"ready"},
+    {"id":"invoicing","name":"Invoicing Agent","department":"Finance","status":"ready"},
+    {"id":"payments","name":"Payment Tracking Agent","department":"Finance","status":"ready"},
+    {"id":"cashflow","name":"Cashflow Agent","department":"Finance","status":"ready"},
+    {"id":"profit","name":"Profit & Loss Agent","department":"Finance","status":"ready"},
+    {"id":"budget","name":"Budget Agent","department":"Finance","status":"ready"},
+    {"id":"finance-reporting","name":"Financial Reporting Agent","department":"Finance","status":"ready"},
+    {"id":"pricing","name":"Pricing Agent","department":"Finance","status":"ready"},
+    {"id":"cost","name":"Cost Optimization Agent","department":"Finance","status":"ready"},
+    {"id":"tax-support","name":"Tax Preparation Support Agent","department":"Finance","status":"ready"},
+    {"id":"finance-audit","name":"Finance Audit Agent","department":"Finance","status":"ready"},
+    {"id":"ops-head","name":"Operations Head Agent","department":"Operations","status":"ready"},
+    {"id":"workflow","name":"Workflow Coordinator Agent","department":"Operations","status":"ready"},
+    {"id":"project-ops","name":"Project Operations Agent","department":"Operations","status":"ready"},
+    {"id":"scheduling","name":"Scheduling Agent","department":"Operations","status":"ready"},
+    {"id":"sop","name":"SOP Manager Agent","department":"Operations","status":"ready"},
+    {"id":"knowledge","name":"Knowledge Operations Agent","department":"Operations","status":"ready"},
+    {"id":"automation-monitor","name":"Automation Monitor Agent","department":"Operations","status":"ready"},
+    {"id":"incident","name":"Incident Response Agent","department":"Operations","status":"ready"},
+    {"id":"vendor","name":"Vendor Operations Agent","department":"Operations","status":"ready"},
+    {"id":"procurement","name":"Procurement Agent","department":"Operations","status":"ready"},
     {"id":"security","name":"Security Agent","department":"Operations & Support","status":"ready"},
 ]
 
@@ -64,9 +86,14 @@ def route_command(command: Command) -> dict[str, Any]:
         routes.append({"department":"Product & Development","agents":["Product Manager Agent","Software Builder Agent","QA Agent"]})
     if any(k in text for k in ["marketing", "seo", "campaign", "brand"]):
         routes.append({"department":"Marketing & Growth","agents":["Marketing Head Agent","SEO Agent","Analytics Agent"]})
-    if any(k in text for k in ["after sales", "after-sales", "renewal", "retention", "feedback", "warranty", "support", "billing", "finance", "delivery", "onboard"]):
-        routes.append({"department":"Operations & Support","agents":["Customer Success Agent","Support Agent","Delivery Coordinator"]})
+    if any(k in text for k in ["after sales", "after-sales", "renewal", "retention", "feedback", "warranty"]):
         routes.append({"department":"After-Sales & Retention","agents":["After-Sales Service Agent","Customer Feedback Agent","Retention Agent","Renewal Agent"]})
+    if any(k in text for k in ["finance", "revenue", "expense", "invoice", "payment", "cashflow", "profit", "budget", "tax", "pricing"]):
+        routes.append({"department":"Finance","agents":["Finance Head Agent","Accounting Agent","Invoicing Agent","Cashflow Agent","Financial Reporting Agent"]})
+    if any(k in text for k in ["operations", "ops", "workflow", "sop", "schedule", "vendor", "procurement", "incident", "automation"]):
+        routes.append({"department":"Operations","agents":["Operations Head Agent","Workflow Coordinator Agent","SOP Manager Agent","Automation Monitor Agent"]})
+    if any(k in text for k in ["support", "billing", "delivery", "onboard"]):
+        routes.append({"department":"Operations & Support","agents":["Customer Success Agent","Support Agent","Delivery Coordinator"]})
     if not routes:
         routes.append({"department":"Executive","agents":["DIMRI CEO"]})
     return {"accepted":True,"command":command.command,"priority":command.priority,"status":"routed","routes":routes}
