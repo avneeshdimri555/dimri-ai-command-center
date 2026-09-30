@@ -11,6 +11,7 @@ from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
 from .integrations import integration_status
 from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content
+from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -181,3 +182,44 @@ def youtube_update_content(content_id: str, update: YouTubeContentUpdate) -> dic
     if not result:
         raise HTTPException(status_code=404, detail="Content not found")
     return {"content": result}
+
+
+@app.get("/api/youtube/oauth/status")
+def youtube_oauth_status() -> dict[str, Any]:
+    return oauth_status()
+
+@app.get("/api/youtube/oauth/start")
+def youtube_oauth_start(request):
+    from fastapi.responses import RedirectResponse
+    try:
+        redirect_uri=str(request.base_url).rstrip("/")+"/api/youtube/oauth/callback"
+        return RedirectResponse(oauth_start_url(redirect_uri),status_code=302)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503,detail=str(exc))
+
+@app.get("/api/youtube/oauth/callback")
+async def youtube_oauth_finish(request):
+    from fastapi.responses import RedirectResponse
+    code=request.query_params.get("code"); state=request.query_params.get("state")
+    if request.query_params.get("error"):
+        return RedirectResponse("https://dimri-youtube-studio.onrender.com/youtube.html?google=denied")
+    if not code or not state: raise HTTPException(status_code=400,detail="Missing OAuth code/state")
+    redirect_uri=str(request.base_url).rstrip("/")+"/api/youtube/oauth/callback"
+    try:
+        await oauth_callback(code,state,redirect_uri)
+        await fetch_my_channels()
+        return RedirectResponse("https://dimri-youtube-studio.onrender.com/youtube.html?google=connected")
+    except Exception:
+        return RedirectResponse("https://dimri-youtube-studio.onrender.com/youtube.html?google=error")
+
+@app.post("/api/youtube/oauth/sync")
+async def youtube_oauth_sync() -> dict[str, Any]:
+    try: return {"channels":await fetch_my_channels()}
+    except Exception as exc: raise HTTPException(status_code=503,detail=str(exc))
+
+@app.post("/api/youtube/images/generate")
+async def youtube_image_generate(payload: dict[str,str]) -> dict[str, Any]:
+    prompt=(payload.get("prompt") or "").strip()
+    if not prompt: raise HTTPException(status_code=400,detail="Prompt is required")
+    try: return await generate_image(prompt)
+    except Exception as exc: raise HTTPException(status_code=503,detail=str(exc))
