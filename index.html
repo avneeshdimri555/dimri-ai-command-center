@@ -21,6 +21,7 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
   <div class="brand"><div class="brandmark">D</div><div><b>DIMRI AI</b><small>AUTONOMOUS COMPANY OS</small></div></div>
   <div class="nav-title">Command</div>
   <button class="nav active" data-view="overview"><span class="ico">◈</span><span>Overview</span></button>
+  <button class="nav" data-view="brain"><span class="ico">🧠</span><span>Company Brain</span></button>
   <button class="nav" data-view="agents"><span class="ico">◉</span><span>AI Workforce</span></button>
   <button class="nav" data-view="ghost"><span class="ico">👻</span><span>Ghost Mode</span></button>
   <div class="nav-title">Business</div>
@@ -61,6 +62,26 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
 </div></div>
 <div class="grid two" style="margin-top:15px"><div class="panel"><div class="panel-head"><h2>Live Activity</h2><button class="btn secondary" onclick="showView('activity')">View all</button></div><div class="list" id="activityPreview"></div></div><div class="panel"><div class="panel-head"><h2>Founder Approvals</h2><span class="chip">4 pending</span></div><div class="list"><div class="approval"><div class="lead-row"><div><b>Publish Ghost Mode batch</b><div class="tiny">8 researched pieces · YouTube + Instagram</div></div><span class="tag">Review</span></div></div><div class="approval"><div class="lead-row"><div><b>Client proposal · Local Business</b><div class="tiny">Website + content package</div></div><span class="tag hot">Decision</span></div></div></div></div></div>
 <div class="footer">DIMRI AI prototype · Frontend simulation. Real integrations, credentials, publishing and money movement require explicit connected services and permission gates.</div>
+</section>
+
+<section class="view" data-view="brain">
+<div class="hero"><div><h1>🧠 Company Brain</h1><p>The orchestration layer that turns one founder command into coordinated department work.</p></div><button class="btn" onclick="routeBrain()">▶ Route Test Command</button></div>
+<div class="grid two">
+<div class="panel"><div class="panel-head"><h2>Decision Pipeline</h2><span class="chip green">Orchestrator</span></div>
+<div class="flow" style="flex-wrap:wrap">
+<div class="f">👤 Founder<br>Intent</div><span class="arrow">→</span><div class="f">🧠 DIMRI CEO<br>Understand</div><span class="arrow">→</span><div class="f">🗺️ Plan<br>Decompose</div><span class="arrow">→</span><div class="f">👥 Delegate<br>Route</div><span class="arrow">→</span><div class="f">⚙️ Execute<br>Tools</div><span class="arrow">→</span><div class="f">🧪 Verify<br>QA</div><span class="arrow">→</span><div class="f">📊 Report<br>Outcome</div>
+</div></div>
+<div class="panel"><div class="panel-head"><h2>Brain Principles</h2><span class="tiny">Always on</span></div>
+<div class="list"><div class="content-card"><b>Capability routing</b><p>Tasks go to the agents best suited to the work.</p></div><div class="content-card"><b>Evidence first</b><p>Factual workflows preserve source and verification state.</p></div><div class="content-card"><b>Permission boundaries</b><p>Consequential external actions remain controlled.</p></div><div class="content-card"><b>Outcome reporting</b><p>Every workflow returns status, evidence and next action.</p></div></div></div>
+</div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Command Router</h2><span class="tiny">Prototype routing engine</span></div>
+<div class="rule"><b>Example:</b> “Find 10 local businesses, research their needs, prepare personalized proposals, and create a Ghost Mode content idea from current verified trends.”</div>
+<div id="brainResult" class="empty">Run the test command to see how DIMRI CEO routes work across departments.</div></div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Memory Layers</h2><span class="tiny">Planned</span></div><div class="grid three">
+<div class="content-card"><b>Company Memory</b><p>Strategy, brand rules, SOPs, policies and goals.</p></div>
+<div class="content-card"><b>Project Memory</b><p>Requirements, decisions, assets and progress.</p></div>
+<div class="content-card"><b>Agent Memory</b><p>Role-specific knowledge, tools and learned workflows.</p></div>
+</div></div>
 </section>
 
 <section class="view" data-view="agents">
@@ -155,6 +176,7 @@ function renderActivity(){ $('activityList').innerHTML=state.activities.map(a=>'
 function renderApprovals(){let items=['Publish Ghost Mode batch','Approve new client proposal','Connect YouTube publishing integration','Enable production deployment'];$('approvalList').innerHTML=items.map((x,i)=>'<div class="approval"><div class="lead-row"><div><b>'+x+'</b><p class="tiny">Founder gate · consequential action</p></div><button class="btn secondary" onclick="approveItem('+i+')">Review</button></div></div>').join('')}
 function addActivity(who,msg){state.activities.unshift([who,msg,'Just now']);renderActivity()}
 function toast(msg){let t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+async function routeBrain(){const box=$('brainResult');box.className='content-card';box.innerHTML='<b>Routing command…</b><p>DIMRI CEO is mapping the objective to capable departments.</p>';try{const r=await fetch('http://localhost:8000/api/brain/route',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'Find businesses, prepare personalized proposals, and create a verified Ghost Mode content idea'})});const d=await r.json();box.innerHTML='<b>DIMRI CEO routing result</b>'+d.routes.map(x=>'<div class="content-card" style="margin-top:8px"><b>'+x.department+'</b><p>'+x.agents.join(' → ')+'</p></div>').join('');addActivity('DIMRI CEO','Routed a test command across '+d.routes.length+' department(s).');toast('Command routed successfully')}catch(e){box.innerHTML='<b>Backend not connected yet</b><p>Start FastAPI on port 8000 to test live routing. The UI remains usable in prototype mode.</p>';toast('Start the backend to enable live routing')}}
 function runCycle(){addActivity('DIMRI CEO','Started coordinated company AI cycle.');toast('AI cycle started: research → growth → delivery')}
 function runGhost(){state.content.unshift(['New evidence-backed topic queued','Research running','Source verification required']);addActivity('Ghost Mode Agent','Started research-first content cycle.');renderContent();toast('Ghost Mode cycle started')}
 function runProspecting(){state.leads.unshift(['New qualified prospect','Need discovery pending','New']);$('leadMetric').textContent=125+1;$('growthLeads').textContent=126;addActivity('Lead Research Agent','Added a new qualified prospect to CRM.');renderLeads();toast('Prospecting cycle added a demo lead')}
