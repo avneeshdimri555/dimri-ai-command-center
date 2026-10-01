@@ -91,3 +91,27 @@ def audit_events(limit: int = 50) -> list[dict[str, Any]]:
         return [dict(r) for r in conn.execute("SELECT * FROM audit_log ORDER BY created_at DESC LIMIT ?", (limit,))]
 
 init_db()
+
+
+def add_agent_report(agent_id: str, report_type: str, summary: str, status: str = "submitted") -> dict[str, Any]:
+    report = {
+        "id": f"report-{uuid4().hex[:10]}",
+        "agent_id": agent_id,
+        "report_type": report_type,
+        "summary": summary,
+        "status": status,
+        "created_at": now(),
+    }
+    with connect() as conn:
+        conn.execute("INSERT INTO agent_reports VALUES (:id,:agent_id,:report_type,:summary,:status,:created_at)", report)
+        conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)", (str(uuid4()), "agent_report", agent_id, report["id"], now()))
+    return report
+
+
+def list_agent_reports(agent_id: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+    with connect() as conn:
+        if agent_id:
+            rows = conn.execute("SELECT * FROM agent_reports WHERE agent_id=? ORDER BY created_at DESC LIMIT ?", (agent_id, limit))
+        else:
+            rows = conn.execute("SELECT * FROM agent_reports ORDER BY created_at DESC LIMIT ?", (limit,))
+        return [dict(r) for r in rows]
