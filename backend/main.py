@@ -13,6 +13,7 @@ from .integrations import integration_status
 from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image
 from .ghost_mode import review_claims, status as ghost_mode_status
+from .agents import list_agents, get_agent
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -55,6 +56,11 @@ class DigitalProduct(BaseModel):
     currency: str = "USD"
     asset_path: str | None = None
     marketplaces: str = "gumroad"
+
+class AgentDispatch(BaseModel):
+    agent_id: str
+    instruction: str
+    priority: str = "normal"
 
 class GhostClaim(BaseModel):
     claim: str
@@ -155,6 +161,27 @@ def company() -> dict[str, Any]:
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
 
+
+@app.get("/api/agents")
+def agents() -> dict[str, Any]:
+    roster = list_agents()
+    return {"agents": roster, "count": len(roster), "execution_mode": "task_queue_only",
+            "note": "Agent roles are configured internally. Dispatch queues work; it does not autonomously execute model, media, or publishing actions."}
+
+@app.post("/api/agents/dispatch")
+def agent_dispatch(payload: AgentDispatch) -> dict[str, Any]:
+    agent = get_agent(payload.agent_id)
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    instruction = payload.instruction.strip()
+    if not instruction:
+        raise HTTPException(status_code=400, detail="Instruction cannot be empty")
+    if payload.priority not in {"low", "normal", "high", "urgent"}:
+        raise HTTPException(status_code=400, detail="Invalid priority")
+    task = queue.enqueue(instruction, payload.priority, payload.agent_id)
+    return {"accepted": True, "status": "queued", "agent": agent["name"], "task": task,
+            "execution_mode": "task_queue_only",
+            "note": "Queued only. A connected execution worker and model/tool credentials are required to perform the task."}
 
 @app.get("/api/ghost/status")
 def ghost_status() -> dict[str, Any]:
