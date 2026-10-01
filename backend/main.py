@@ -15,6 +15,7 @@ from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_
 from .ghost_mode import review_claims, status as ghost_mode_status
 from .agents import list_agents, get_agent, workforce_summary, CORE_TEAM, DIVISIONS
 from .facebook_studio import list_pages as list_facebook_pages, add_page as add_facebook_page
+from .worker import worker_status, run_worker_once
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -77,6 +78,14 @@ class GhostClaim(BaseModel):
 class GhostReview(BaseModel):
     content_title: str = ""
     claims: list[GhostClaim] = []
+
+@app.get("/api/worker/status")
+def worker_runtime_status() -> dict[str, Any]:
+    return worker_status()
+
+@app.post("/api/worker/run")
+async def worker_run(limit: int = 5) -> dict[str, Any]:
+    return await run_worker_once(limit)
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
