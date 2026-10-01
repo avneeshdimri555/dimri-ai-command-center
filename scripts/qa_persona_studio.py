@@ -46,7 +46,8 @@ def main():
 
     required_functions = [
         "renderStep", "collect", "stepMove", "savePersona", "editPersona",
-        "newPersona", "renderPersonas", "renderPlans", "planAction",\n        "saveProductDNA", "editProductDNA", "deleteProductDNA", "renderProductDNA",
+        "newPersona", "renderPersonas", "renderPlans", "planAction",
+        "saveProductDNA", "editProductDNA", "deleteProductDNA", "renderProductDNA",
     ]
     for name in required_functions:
         if not re.search(r"function\s+" + re.escape(name) + r"\s*\(", html):
