@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
 from .task_queue import queue
-from .db import audit_events, add_agent_report, list_agent_reports, add_approval, list_approvals, decide_approval, list_personas, create_persona, update_persona
+from .db import audit_events, add_agent_report, list_agent_reports, add_approval, list_approvals, decide_approval, list_personas, create_persona, update_persona, get_persona_autopilot, save_persona_autopilot
 from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
@@ -56,6 +56,17 @@ class PersonaProfileUpdate(BaseModel):
     status: str | None = None
     tags: list[str] | None = None
     linked_campaigns: list[str] | None = None
+
+class PersonaAutopilot(BaseModel):
+    platforms: list[str] = ["instagram"]
+    photos_per_day: int = 3
+    videos_per_day: int = 2
+    content_themes: str
+    mode: str = "approval"
+    timezone: str = "Asia/Kolkata"
+    posting_window: str = "10:00-20:00"
+    disclose_ai: bool = True
+    enabled: bool = False
 
 class YouTubeContent(BaseModel):
     channel_id: str | None = None
@@ -298,6 +309,34 @@ def persona_update(persona_id: str, payload: PersonaProfileUpdate) -> dict[str, 
     if not item:
         raise HTTPException(status_code=404, detail="Persona not found")
     return {"persona": item}
+
+@app.get("/api/personas/{persona_id}/autopilot")
+def persona_autopilot_get(persona_id: str) -> dict[str, Any]:
+    profile = next((p for p in list_personas() if p["id"] == persona_id), None)
+    if not profile:
+        raise HTTPException(status_code=404, detail="Persona not found")
+    return {"autopilot": get_persona_autopilot(persona_id), "execution_state": "configuration_only",
+            "note": "Saved schedule preferences are not an active publisher. Platform authorization, media generation and a production scheduler are required."}
+
+@app.put("/api/personas/{persona_id}/autopilot")
+def persona_autopilot_put(persona_id: str, payload: PersonaAutopilot) -> dict[str, Any]:
+    allowed_platforms = {"instagram", "facebook"}
+    if not payload.platforms or any(p not in allowed_platforms for p in payload.platforms):
+        raise HTTPException(status_code=400, detail="Choose Instagram and/or Facebook.")
+    if not 0 <= payload.photos_per_day <= 10 or not 0 <= payload.videos_per_day <= 5:
+        raise HTTPException(status_code=400, detail="Daily limits: up to 10 photos and 5 videos.")
+    if payload.mode not in {"draft", "approval", "auto"}:
+        raise HTTPException(status_code=400, detail="Mode must be draft, approval or auto.")
+    if not payload.content_themes.strip():
+        raise HTTPException(status_code=400, detail="Add content themes before saving.")
+    item = save_persona_autopilot(persona_id, payload.platforms, payload.photos_per_day,
+        payload.videos_per_day, payload.content_themes.strip(), payload.mode,
+        payload.timezone, payload.posting_window, payload.disclose_ai,
+        payload.enabled)
+    if not item:
+        raise HTTPException(status_code=404, detail="Persona not found")
+    return {"autopilot": item, "execution_state": "configuration_only",
+            "note": "Preferences saved. Auto mode is a requested policy only; live execution requires connected Meta permissions, media generation and a deployed scheduler. No content has been posted."}
 
 @app.get("/api/facebook/pages")
 def facebook_pages() -> dict[str, Any]:
