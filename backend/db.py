@@ -46,6 +46,14 @@ def init_db() -> None:
             reason TEXT NOT NULL, status TEXT NOT NULL, decision_note TEXT,
             created_at TEXT NOT NULL, decided_at TEXT
         );
+        CREATE TABLE IF NOT EXISTS personas (
+            id TEXT PRIMARY KEY, persona_name TEXT NOT NULL,
+            gender_presentation TEXT NOT NULL, visual_identity TEXT NOT NULL,
+            voice_dna TEXT NOT NULL, content_goal TEXT NOT NULL,
+            status TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '[]',
+            linked_campaigns TEXT NOT NULL DEFAULT '[]',
+            created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+        );
         """)
 
 
@@ -149,3 +157,90 @@ def decide_approval(approval_id: str, status: str, decision_note: str = "") -> d
             conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)", (str(uuid4()), "approval_decision", "Founder", f"{approval_id}:{status}", now()))
             return dict(row)
     return None
+
+
+def list_personas() -> list[dict[str, Any]]:
+    import json
+    with connect() as conn:
+        rows = conn.execute("SELECT * FROM personas ORDER BY updated_at DESC").fetchall()
+    result = []
+    for row in rows:
+        item = dict(row)
+        for field in ("tags", "linked_campaigns"):
+            try:
+                item[field] = json.loads(item.get(field) or "[]")
+            except (TypeError, ValueError):
+                item[field] = []
+        result.append(item)
+    return result
+
+
+def create_persona(persona_name: str, gender_presentation: str = "Androgynous",
+                   visual_identity: str = "", voice_dna: str = "",
+                   content_goal: str = "", tags: list[str] | None = None,
+                   linked_campaigns: list[str] | None = None) -> dict[str, Any]:
+    import json
+    name = persona_name.strip()
+    if not name:
+        raise ValueError("Persona name is required")
+    timestamp = now()
+    item = {
+        "id": f"persona-{uuid4().hex[:12]}",
+        "persona_name": name,
+        "gender_presentation": gender_presentation.strip() or "Androgynous",
+        "visual_identity": visual_identity.strip(),
+        "voice_dna": voice_dna.strip(),
+        "content_goal": content_goal.strip(),
+        "status": "draft",
+        "tags": json.dumps(tags or [], ensure_ascii=False),
+        "linked_campaigns": json.dumps(linked_campaigns or [], ensure_ascii=False),
+        "created_at": timestamp,
+        "updated_at": timestamp,
+    }
+    with connect() as conn:
+        conn.execute(
+            "INSERT INTO personas (id,persona_name,gender_presentation,visual_identity,voice_dna,content_goal,status,tags,linked_campaigns,created_at,updated_at) "
+            "VALUES (:id,:persona_name,:gender_presentation,:visual_identity,:voice_dna,:content_goal,:status,:tags,:linked_campaigns,:created_at,:updated_at)",
+            item,
+        )
+        conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)",
+                     (str(uuid4()), "persona_created", "Founder", item["id"], timestamp))
+    item["tags"] = tags or []
+    item["linked_campaigns"] = linked_campaigns or []
+    return item
+
+
+def update_persona(persona_id: str, updates: dict[str, Any]) -> dict[str, Any] | None:
+    import json
+    allowed = {"persona_name", "gender_presentation", "visual_identity", "voice_dna",
+               "content_goal", "status", "tags", "linked_campaigns"}
+    changes = {k: v for k, v in updates.items() if k in allowed}
+    if not changes:
+        with connect() as conn:
+            row = conn.execute("SELECT * FROM personas WHERE id=?", (persona_id,)).fetchone()
+        return dict(row) if row else None
+    if "persona_name" in changes:
+        changes["persona_name"] = str(changes["persona_name"]).strip()
+        if not changes["persona_name"]:
+            raise ValueError("Persona name is required")
+    for field in ("tags", "linked_campaigns"):
+        if field in changes:
+            changes[field] = json.dumps(changes[field] or [], ensure_ascii=False)
+    changes["updated_at"] = now()
+    setters = ", ".join(f"{key}=:{key}" for key in changes)
+    changes["id"] = persona_id
+    with connect() as conn:
+        conn.execute(f"UPDATE personas SET {setters} WHERE id=:id", changes)
+        row = conn.execute("SELECT * FROM personas WHERE id=?", (persona_id,)).fetchone()
+        if row:
+            conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)",
+                         (str(uuid4()), "persona_updated", "Founder", persona_id, now()))
+    if not row:
+        return None
+    item = dict(row)
+    for field in ("tags", "linked_campaigns"):
+        try:
+            item[field] = json.loads(item.get(field) or "[]")
+        except (TypeError, ValueError):
+            item[field] = []
+    return item
