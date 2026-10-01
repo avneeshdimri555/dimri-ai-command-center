@@ -82,6 +82,32 @@ class GhostReview(BaseModel):
 def health() -> dict[str, Any]:
     return {"ok": True, "service": "dimri-ai-company-os", "version":"0.4.0", "time": datetime.now(timezone.utc).isoformat()}
 
+@app.get("/api/control-center")
+def control_center() -> dict[str, Any]:
+    tasks = queue.list()
+    counts = {"queued": 0, "in_progress": 0, "completed": 0, "failed": 0, "cancelled": 0}
+    for task in tasks:
+        status = task.get("status")
+        if status in counts:
+            counts[status] += 1
+    channels = list_channels()
+    pages = list_facebook_pages()
+    integrations = integration_status()
+    return {
+        "company": company(),
+        "service": {"status": "online", "execution_mode": "task_queue_only"},
+        "tasks": {"total_recent": len(tasks), "by_status": counts},
+        "workforce": workforce_summary(),
+        "reports": len(list_agent_reports(limit=200)),
+        "youtube": {"registered_channels": len(channels), "oauth": oauth_status()},
+        "facebook": {"registered_pages": len(pages), "state": "manual_registry_only"},
+        "ghost_mode": ghost_mode_status(),
+        "integrations": integrations,
+        "founder_gate": True,
+        "note": "This endpoint reports configured and persisted system state. It does not imply autonomous model execution or external publishing is active."
+    }
+
+
 @app.get("/api/brain")
 def brain() -> dict[str, Any]:
     return {"name":"DIMRI Company Brain","state":"persistent-memory","memory":memory.context(),"routing_capabilities":8}
