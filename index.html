@@ -222,9 +222,9 @@ body{background:radial-gradient(ellipse at 50% -20%,#183c5e 0%,#09172a 43%,#050b
 <label class="field-label" for="personaLook">Visual Identity</label><textarea class="search persona-text" id="personaLook" placeholder="Face shape, eyes, skin tone, hair, signature style, wardrobe..."></textarea>
 <label class="field-label" for="personaVoice">Voice DNA & Languages</label><input class="search" id="personaVoice" placeholder="Timbre, pitch, pace, Hindi / English / accent...">
 <label class="field-label" for="personaGoal">Content & Social Goal</label><textarea class="search persona-text" id="personaGoal" placeholder="Instagram niche, personality, reels, UGC, audience..."></textarea>
-<div class="persona-actions"><button class="btn" onclick="submitPersonaBrief()">Queue Persona Blueprint</button><button class="btn secondary" onclick="resetPersonaForm()">Clear</button></div>
+<div class="persona-actions"><button class="btn" onclick="submitPersonaBrief()">Save Profile & Queue Blueprint</button><button class="btn secondary" onclick="resetPersonaForm()">Clear</button></div>
 <div id="personaTaskResult" class="empty" style="margin-top:10px">Blueprints are routed through the company task queue.</div></div>
-<div class="persona-side"><div class="panel"><div class="panel-head"><h2>Persona Library</h2><span class="chip">Workspace</span></div><div class="persona-empty"><div class="persona-symbol">◉</div><b>No saved persona profiles yet</b><p>Start with a persona blueprint. Persistent model storage, visual generation and versioned asset management still need their backend workflow.</p><button class="btn secondary" onclick="showPersonaForm()">Create first persona</button></div></div>
+<div class="persona-side"><div class="panel"><div class="panel-head"><h2>Persona Library</h2><span class="chip">Workspace</span></div><div id="personaLibrary"><div class="persona-empty"><div class="persona-symbol">◉</div><b>Loading persona profiles…</b><p>Connecting to the company profile library.</p></div></div></div>
 <div class="panel"><div class="panel-head"><h2>Social Presence</h2><span class="chip">Account setup</span></div><div class="social-row"><div class="social-icon instagram">◎</div><div class="social-copy"><b>Instagram</b><small>Persona reels, posts, captions and account management</small><span class="tag">Not connected</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div><div class="social-row"><div class="social-icon facebook">f</div><div class="social-copy"><b>Facebook</b><small>Page content and distribution workflow</small><span class="tag">Not connected</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div><div class="social-row"><div class="social-icon youtube">▶</div><div class="social-copy"><b>YouTube</b><small>Shorts, videos and channel publishing workflow</small><span class="tag">Connection required</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div><div class="social-row"><div class="social-icon x-social">𝕏</div><div class="social-copy"><b>X</b><small>Persona posts and audience updates</small><span class="tag">Not connected</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div></div></div></div>
 <div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Persona Production Pipeline</h2><span class="chip green">Founder controlled</span></div><div class="persona-pipeline"><div><b>01</b><strong>Blueprint</strong><small>Identity & goals</small></div><i>→</i><div><b>02</b><strong>Visual DNA</strong><small>Face, style & assets</small></div><i>→</i><div><b>03</b><strong>Voice DNA</strong><small>Voice & language</small></div><i>→</i><div><b>04</b><strong>Content Studio</strong><small>Images, reels, UGC</small></div><i>→</i><div><b>05</b><strong>Review</strong><small>Quality & rights</small></div><i>→</i><div><b>06</b><strong>Publish</strong><small>Approved accounts</small></div></div><p class="org-disclaimer">This is the Persona Studio workspace foundation. Persona persistence, image/video generation, OAuth account connection and direct social publishing are not yet active in this module.</p></div>
 </section>
@@ -487,19 +487,58 @@ function closeModal(){$('modal').classList.remove('open')}
 
 function showPersonaForm(){const p=$('personaCreatePanel');if(p){p.scrollIntoView({behavior:'smooth',block:'start'});$('personaName').focus()}}
 function resetPersonaForm(){['personaName','personaLook','personaVoice','personaGoal'].forEach(id=>$(id).value='');$('personaGender').selectedIndex=0;$('personaTaskResult').textContent='Blueprints are routed through the company task queue.'}
+let personaCache=[];
+let editingPersonaId=null;
+function personaEscape(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+async function loadPersonas(){
+ const lib=$('personaLibrary');if(!lib)return;
+ try{
+  const r=await fetch(API_BASE+'/api/personas');if(!r.ok)throw new Error('Persona API '+r.status);
+  const d=await r.json();personaCache=d.personas||[];renderPersonas();
+ }catch(e){lib.innerHTML='<div class="empty">Persona library is unavailable. Check the API connection and try refresh.</div>'}
+}
+function renderPersonas(){
+ const lib=$('personaLibrary'),count=$('personaCount');if(!lib)return;
+ if(count)count.textContent=personaCache.length;
+ if(!personaCache.length){lib.innerHTML='<div class="persona-empty"><div class="persona-symbol">◉</div><b>No saved persona profiles yet</b><p>Create a profile to save its visual identity, Voice DNA and content direction to the backend library.</p><button class="btn secondary" onclick="showPersonaForm()">Create first persona</button></div>';return}
+ lib.innerHTML='<div class="list">'+personaCache.map(p=>'<article class="content-card" style="margin:8px 0"><div class="lead-row"><div><b>'+personaEscape(p.persona_name)+'</b><p>'+personaEscape(p.gender_presentation)+' · '+personaEscape(p.status||"draft")+'</p></div><button class="btn secondary" onclick="editPersona(\''+personaEscape(p.id)+'\')">Edit Profile</button></div><p><b>Visual DNA:</b> '+personaEscape(p.visual_identity||"Not defined")+'</p><p><b>Voice DNA:</b> '+personaEscape(p.voice_dna||"Not defined")+'</p><p><b>Content Goal:</b> '+personaEscape(p.content_goal||"Not defined")+'</p><span class="tiny">Updated '+personaEscape(p.updated_at||p.created_at||"")+'</span></article>').join('')+'</div>';
+}
+function editPersona(id){
+ const p=personaCache.find(x=>x.id===id);if(!p)return;editingPersonaId=id;
+ $('personaName').value=p.persona_name||'';$('personaGender').value=p.gender_presentation||'Androgynous';
+ $('personaLook').value=p.visual_identity||'';$('personaVoice').value=p.voice_dna||'';$('personaGoal').value=p.content_goal||'';
+ const btn=document.querySelector('[onclick="submitPersonaBrief()"]');if(btn)btn.textContent='Update Profile & Queue Blueprint';
+ $('personaTaskResult').textContent='Editing saved profile '+p.persona_name+'. Save to update its record.';showPersonaForm();
+}
+function resetPersonaForm(){
+ ['personaName','personaLook','personaVoice','personaGoal'].forEach(id=>$(id).value='');$('personaGender').selectedIndex=0;editingPersonaId=null;
+ const btn=document.querySelector('[onclick="submitPersonaBrief()"]');if(btn)btn.textContent='Save Profile & Queue Blueprint';
+ $('personaTaskResult').textContent='Profile details are saved to the backend when you submit.';
+}
 async function submitPersonaBrief(){
  const name=$('personaName').value.trim(),gender=$('personaGender').value,look=$('personaLook').value.trim(),voice=$('personaVoice').value.trim(),goal=$('personaGoal').value.trim(),box=$('personaTaskResult');
  if(!name||!look||!goal){box.textContent='Please enter a persona name, visual identity and content goal.';return}
- const command='Create an AI persona blueprint for '+name+'. Gender presentation: '+gender+'. Visual identity: '+look+'. Voice DNA and languages: '+(voice||'To be defined')+'. Content and social goal: '+goal+'. Route this as a persona studio planning task; do not generate assets or publish.';
- box.className='content-card';box.textContent='Sending persona blueprint to the company task queue…';
- try{const r=await fetch(API_BASE+'/api/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command,priority:'normal'})});if(!r.ok)throw new Error('queue unavailable');const d=await r.json();const taskId=d.task&&d.task.id?d.task.id:'queued';box.innerHTML='<b>Persona blueprint queued</b><p>Task '+taskId+' has been added to the company queue. This is a planning task, not a saved or generated model.</p>';addActivity('Persona Studio','Queued blueprint for '+name+' ('+taskId+').');toast('Persona blueprint queued')}catch(e){box.className='empty';box.textContent='Could not reach the company task queue. Please retry when the backend is available.';toast('Queue unavailable')}
+ const profile={persona_name:name,gender_presentation:gender,visual_identity:look,voice_dna:voice,content_goal:goal};
+ box.className='content-card';box.textContent='Saving persona profile…';
+ try{
+  const path=editingPersonaId?'/api/personas/'+encodeURIComponent(editingPersonaId):'/api/personas';
+  const saved=await fetch(API_BASE+path,{method:editingPersonaId?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(profile)});
+  const sd=await saved.json();if(!saved.ok)throw new Error(sd.detail||'Persona profile save failed');
+  const p=sd.persona;const command='Prepare a detailed AI persona blueprint for '+name+'. Gender presentation: '+gender+'. Visual identity: '+look+'. Voice DNA and languages: '+(voice||'To be defined')+'. Content and social goal: '+goal+'. Treat this as a planning task only; do not generate assets or publish.';
+  try{
+   const r=await fetch(API_BASE+'/api/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command,priority:'normal'})});
+   const d=await r.json();if(!r.ok)throw new Error(d.detail||'Task queue unavailable');
+   box.innerHTML='<b>Profile saved · Blueprint queued</b><p>'+personaEscape(p.persona_name)+' is saved in the Persona Library. Planning task '+personaEscape(d.task?.id||'queued')+' was added; this does not mean assets were generated.</p>';
+  }catch(queueError){box.innerHTML='<b>Profile saved</b><p>Persona record is saved, but task queue was unavailable: '+personaEscape(queueError.message)+'</p>'}
+  addActivity('Persona Studio',(editingPersonaId?'Updated ':'Saved ')+name+' persona profile.');editingPersonaId=null;resetPersonaForm();await loadPersonas();toast('Persona profile saved');
+ }catch(e){box.className='empty';box.textContent='Could not save persona: '+e.message;toast('Persona save failed')}
 }
 
 function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addActivity('DIMRI CEO','Created workflow: '+v);closeModal();toast('Workflow created in prototype queue')}
 document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
 $('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
 $('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products');else if(q.includes('structure')||q.includes('aishani')||q.includes('pillar')||q.includes('game'))showView('structure')});
-renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();loadFactory();loadWorkforce();
+renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();loadFactory();loadWorkforce();loadPersonas();
 
 async function createDigitalProduct(){
  const title=prompt('Product title','Cute Sticker Pack Vol. 01'); if(!title)return;
