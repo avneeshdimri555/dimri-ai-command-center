@@ -49,12 +49,12 @@ def main():
         "newPersona", "renderPersonas", "renderPlans", "planAction",
     ]
     for name in required_functions:
-        if not re.search(r"function\\s+" + re.escape(name) + r"\\s*\\(", html):
+        if not re.search(r"function\s+" + re.escape(name) + r"\s*\(", html):
             ok = fail("missing function: " + name) and ok
     if ok:
         print("PASS: creator and workspace action functions are present")
 
-    selects = re.findall(r"\\{id:'([^']+)',label:'([^']+)',type:'select',opts:\\[(.*?)\\]\\}", html, re.S)
+    selects = re.findall(r"\{id:'([^']+)',label:'([^']+)',type:'select',opts:\[(.*?)\]\}", html, re.S)
     if len(selects) < 30:
         ok = fail(f"expected detailed dropdown coverage; found {len(selects)} select definitions") and ok
     else:
