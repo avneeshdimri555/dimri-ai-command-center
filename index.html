@@ -137,11 +137,11 @@ main{min-width:0}.view{animation:boardIn .22s ease}@keyframes boardIn{from{opaci
   <div class="sidebar-foot"><div class="online">● SYSTEM ONLINE</div><div class="tiny" style="margin-top:5px">Founder controlled · Prototype OS</div></div>
 </aside>
 <main class="main">
-<div class="topbar"><div class="crumb">AISHANI ENTERPRISES / DIMRI STUDIO / <span id="crumb">Overview</span></div><div class="top-actions"><input id="search" class="search" placeholder="Search agents, clients, products…"><span class="badge">● Founder Mode</span></div></div>
-
+<div class="topbar board-hidden" id="topbar"><div class="crumb">AISHANI ENTERPRISES / DIMRI STUDIO / <span id="crumb">Overview</span></div><div class="top-actions"><input id="search" class="search" placeholder="Search agents, clients, products…"><span class="badge">● Founder Mode</span></div></div>
+<div id="workspaceBack" class="workspace-back"><button class="btn secondary" onclick="showView('overview')">← Back to God Board</button><span class="tiny">Aishani Enterprises · Founder-controlled workspace</span></div>
 <section class="view active" data-view="overview" id="godBoard">
 <style>
-.app{display:block;min-height:100vh}.sidebar,.topbar{display:none!important}.main{width:100%;max-width:none;margin:0;padding:8px 10px 18px}
+.app{display:block;min-height:100vh}.sidebar{display:none!important}.topbar{display:flex!important;margin-bottom:10px}.topbar.board-hidden{display:none!important}.workspace-back{display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px;padding:8px 10px;border:1px solid #24445d;border-radius:9px;background:#0b1a2d}.workspace-back.visible{display:flex!important}.main{width:100%;max-width:none;margin:0;padding:8px 10px 18px}
 :root{--bd-bg:#07101e;--bd-panel:#0c1a2d;--bd-line:#1b4260;--bd-text:#eff8ff;--bd-muted:#a9bfd1}
 body{background:radial-gradient(ellipse at 50% -20%,#183c5e 0%,#09172a 43%,#050b15 100%);color:var(--bd-text)}
 .god-board{max-width:1920px;margin:0 auto;font-family:Inter,system-ui,sans-serif}
@@ -439,10 +439,10 @@ const products=[
 ['AI Restaurant Marketing','SMB Services'],['AI Real Estate Marketing','SMB Services'],['AI Local Business Growth','SMB Services'],['AI E-commerce Optimizer','SMB Services'],['AI Google Profile Manager','SMB Services'],['AI Website Builder','SMB Services'],['AI Conversion Optimizer','SMB Services'],['AI Digital Menu Builder','SMB Services'],['AI Salon/Beauty Studio','SMB Services'],['AI Clinic Marketing','SMB Services'],
 ['AI Storybook Creator','Creative / Personal'],['AI Greeting Video Maker','Creative / Personal'],['AI Music Visualizer','Creative / Personal'],['AI Virtual Fashion Studio','Creative / Personal'],['AI Beauty Preview','Creative / Personal'],['AI Interior Redesign','Creative / Personal'],['AI Course Creator','Creative / Personal'],['AI Learning Companion','Creative / Personal'],['AI Interview Practice','Creative / Personal'],['AI Sales Roleplay Coach','Creative / Personal']];
 function $(id){return document.getElementById(id)}
-function showView(name){state.view=name;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===name));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));$('crumb').textContent=name.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());window.scrollTo({top:0,behavior:'smooth'})}
+function showView(name){state.view=name;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===name));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));$('crumb').textContent=name.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());const top=$('topbar'),back=$('workspaceBack');if(top)top.classList.toggle('board-hidden',name==='overview');if(back)back.classList.toggle('visible',name!=='overview');window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showView(n.dataset.view));
 function renderAgents(){ $('agentGrid').innerHTML=agents.map(a=>'<div class="agent"><div class="agent-top"><div class="avatar">'+a[0]+'</div><div><h3>'+a[1]+'</h3><div class="status">● Ready / routed</div></div></div><p>'+a[3]+'</p><span class="tag">'+a[4]+'</span></div>').join('') }
-async function loadWorkforce(){
+async async function loadWorkforce(){
  try{
   const r=await fetch(API_BASE+'/api/workforce');
   const d=await r.json();
