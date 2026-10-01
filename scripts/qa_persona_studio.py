@@ -46,7 +46,7 @@ def main():
 
     required_functions = [
         "renderStep", "collect", "stepMove", "savePersona", "editPersona",
-        "newPersona", "renderPersonas", "renderPlans", "planAction",
+        "newPersona", "renderPersonas", "renderPlans", "planAction",\n        "saveProductDNA", "editProductDNA", "deleteProductDNA", "renderProductDNA",
     ]
     for name in required_functions:
         if not re.search(r"function\s+" + re.escape(name) + r"\s*\(", html):
@@ -69,7 +69,7 @@ def main():
         ("TESTER MODE · MOCK OUTPUTS", "explicit demo mode"),
         ("Persona DNA", "Persona DNA workflow"),
         ("Voice Studio", "Voice Studio"),
-        ("Rights & Safety", "rights and safety"),
+        ("Rights & Safety", "rights and safety"),\n        ("Product DNA", "Product DNA workspace"),
     ]:
         if marker not in html:
             ok = fail("missing " + label) and ok
