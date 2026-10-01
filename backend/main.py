@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Any
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
@@ -10,8 +10,8 @@ from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
 from .integrations import integration_status
-from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content
-from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image
+from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content, mark_published, mark_publish_error
+from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image, upload_video
 from .ghost_mode import review_claims, status as ghost_mode_status
 from .agents import list_agents, get_agent, workforce_summary, CORE_TEAM, DIVISIONS
 from .facebook_studio import list_pages as list_facebook_pages, add_page as add_facebook_page
@@ -332,8 +332,8 @@ def ghost_review(payload: GhostReview) -> dict[str, Any]:
 @app.get("/api/youtube/status")
 def youtube_status() -> dict[str, Any]:
     channels = list_channels()
-    return {"workspace": "ready", "oauth_configured": False, "channel_count": len(channels),
-            "note": "Channels are manual registry entries until Google OAuth is implemented and authorized."}
+    return {"workspace": "ready", "channel_count": len(channels), "oauth": oauth_status(),
+            "note": "Google OAuth and YouTube upload are available when the backend OAuth environment variables are configured."}
 
 @app.get("/api/youtube/channels")
 def youtube_channels() -> dict[str, Any]:
@@ -400,6 +400,40 @@ async def youtube_oauth_finish(request: Request):
 async def youtube_oauth_sync() -> dict[str, Any]:
     try: return {"channels":await fetch_my_channels()}
     except Exception as exc: raise HTTPException(status_code=503,detail=str(exc))
+
+
+@app.post("/api/youtube/content/{content_id}/publish")
+async def youtube_publish_content(
+    content_id: str,
+    file: UploadFile = File(...),
+    privacy_status: str = Form("public"),
+    tags: str = Form(""),
+    made_for_kids: bool = Form(False),
+) -> dict[str, Any]:
+    item = next((x for x in list_content() if x["id"] == content_id), None)
+    if not item:
+        raise HTTPException(status_code=404, detail="Content not found")
+    if item["status"] != "approved":
+        raise HTTPException(status_code=409, detail="Content must be explicitly approved in the God Board before publishing.")
+    if not oauth_status().get("connected"):
+        raise HTTPException(status_code=409, detail="Connect Google/YouTube first.")
+    if not file.content_type or (not file.content_type.startswith("video/") and file.content_type != "application/octet-stream"):
+        raise HTTPException(status_code=400, detail="Select a video file.")
+    data = await file.read()
+    if not data:
+        raise HTTPException(status_code=400, detail="Video file is empty.")
+    try:
+        result = await upload_video(
+            data, file.filename or "dimri-upload.mp4", file.content_type,
+            item["title"], item["description"], privacy_status,
+            [x.strip() for x in tags.split(",") if x.strip()], "22", made_for_kids
+        )
+        saved = mark_published(content_id, result["video_id"], result["video_url"])
+        return {"published": True, "video": result, "content": saved,
+                "note": "YouTube accepted the upload. Final visibility can still be constrained by Google's API-project verification rules."}
+    except Exception as exc:
+        mark_publish_error(content_id, str(exc))
+        raise HTTPException(status_code=502, detail="YouTube upload failed: " + str(exc))
 
 @app.post("/api/youtube/images/generate")
 async def youtube_image_generate(payload: dict[str,str]) -> dict[str, Any]:
