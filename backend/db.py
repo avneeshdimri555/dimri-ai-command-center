@@ -41,6 +41,11 @@ def init_db() -> None:
             id TEXT PRIMARY KEY, agent_id TEXT NOT NULL, report_type TEXT NOT NULL,
             summary TEXT NOT NULL, status TEXT NOT NULL, created_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS approvals (
+            id TEXT PRIMARY KEY, task_id TEXT NOT NULL, action TEXT NOT NULL,
+            reason TEXT NOT NULL, status TEXT NOT NULL, decision_note TEXT,
+            created_at TEXT NOT NULL, decided_at TEXT
+        );
         """)
 
 
@@ -115,3 +120,32 @@ def list_agent_reports(agent_id: str | None = None, limit: int = 100) -> list[di
         else:
             rows = conn.execute("SELECT * FROM agent_reports ORDER BY created_at DESC LIMIT ?", (limit,))
         return [dict(r) for r in rows]
+
+
+def add_approval(task_id: str, action: str, reason: str) -> dict[str, Any]:
+    item = {"id": f"approval-{uuid4().hex[:10]}", "task_id": task_id, "action": action,
+            "reason": reason, "status": "pending", "decision_note": None,
+            "created_at": now(), "decided_at": None}
+    with connect() as conn:
+        conn.execute("INSERT INTO approvals VALUES (:id,:task_id,:action,:reason,:status,:decision_note,:created_at,:decided_at)", item)
+        conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)", (str(uuid4()), "approval_requested", "DIMRI CEO", item["id"], now()))
+    return item
+
+def list_approvals(status: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+    with connect() as conn:
+        if status:
+            rows = conn.execute("SELECT * FROM approvals WHERE status=? ORDER BY created_at DESC LIMIT ?", (status, limit))
+        else:
+            rows = conn.execute("SELECT * FROM approvals ORDER BY created_at DESC LIMIT ?", (limit,))
+        return [dict(r) for r in rows]
+
+def decide_approval(approval_id: str, status: str, decision_note: str = "") -> dict[str, Any] | None:
+    if status not in {"approved", "rejected"}:
+        raise ValueError("Approval status must be approved or rejected")
+    with connect() as conn:
+        conn.execute("UPDATE approvals SET status=?, decision_note=?, decided_at=? WHERE id=? AND status='pending'", (status, decision_note, now(), approval_id))
+        row = conn.execute("SELECT * FROM approvals WHERE id=?", (approval_id,)).fetchone()
+        if row:
+            conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)", (str(uuid4()), "approval_decision", "Founder", f"{approval_id}:{status}", now()))
+            return dict(row)
+    return None
