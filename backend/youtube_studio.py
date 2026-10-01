@@ -19,7 +19,8 @@ def init_youtube_tables():
           topic TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL,
           script TEXT NOT NULL, visual_prompt TEXT NOT NULL,
           status TEXT NOT NULL DEFAULT 'draft', created_at TEXT NOT NULL,
-          updated_at TEXT NOT NULL
+          updated_at TEXT NOT NULL, video_id TEXT, video_url TEXT,
+          published_at TEXT, publish_error TEXT
         );
         """)
 
@@ -68,4 +69,24 @@ def update_content(content_id, status):
         row=conn.execute("SELECT * FROM youtube_content WHERE id=?",(content_id,)).fetchone()
     return dict(row)
 
+def _ensure_content_columns():
+    with connect() as conn:
+        cols={row["name"] for row in conn.execute("PRAGMA table_info(youtube_content)").fetchall()}
+        for name, sql_type in [("video_id","TEXT"),("video_url","TEXT"),("published_at","TEXT"),("publish_error","TEXT")]:
+            if name not in cols:
+                conn.execute("ALTER TABLE youtube_content ADD COLUMN " + name + " " + sql_type)
+
+def mark_published(content_id, video_id, video_url):
+    with connect() as conn:
+        conn.execute("UPDATE youtube_content SET status='published', video_id=?, video_url=?, published_at=?, publish_error=NULL, updated_at=? WHERE id=?",
+                     (video_id, video_url, _now(), _now(), content_id))
+        row=conn.execute("SELECT * FROM youtube_content WHERE id=?",(content_id,)).fetchone()
+    return dict(row) if row else None
+
+def mark_publish_error(content_id, error):
+    with connect() as conn: conn.execute("UPDATE youtube_content SET publish_error=?, updated_at=? WHERE id=?",(str(error)[:2000],_now(),content_id))
+    with connect() as conn: row=conn.execute("SELECT * FROM youtube_content WHERE id=?",(content_id,)).fetchone()
+    return dict(row) if row else None
+
 init_youtube_tables()
+_ensure_content_columns()
