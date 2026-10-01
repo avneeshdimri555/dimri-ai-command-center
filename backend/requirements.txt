@@ -6,3 +6,4 @@ httpx
 google-auth-oauthlib
 cryptography
 itsdangerous
+python-multipart
