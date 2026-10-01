@@ -1,0 +1,26 @@
+name: Persona Studio QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "persona-studio.html"
+      - "scripts/qa_persona_studio.py"
+      - ".github/workflows/persona-studio-qa.yml"
+  pull_request:
+    paths:
+      - "persona-studio.html"
+      - "scripts/qa_persona_studio.py"
+      - ".github/workflows/persona-studio-qa.yml"
+  workflow_dispatch:
+
+jobs:
+  static-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate Persona Studio structure and controls
+        run: python scripts/qa_persona_studio.py
