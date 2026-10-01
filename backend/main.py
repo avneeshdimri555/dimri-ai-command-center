@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
 from .task_queue import queue
-from .db import audit_events, add_agent_report, list_agent_reports, add_approval, list_approvals, decide_approval
+from .db import audit_events, add_agent_report, list_agent_reports, add_approval, list_approvals, decide_approval, list_personas, create_persona, update_persona
 from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
@@ -37,6 +37,25 @@ class YouTubeChannel(BaseModel):
     name: str
     handle: str = ""
     channel_url: str = ""
+
+class PersonaProfile(BaseModel):
+    persona_name: str
+    gender_presentation: str = "Androgynous"
+    visual_identity: str = ""
+    voice_dna: str = ""
+    content_goal: str = ""
+    tags: list[str] = []
+    linked_campaigns: list[str] = []
+
+class PersonaProfileUpdate(BaseModel):
+    persona_name: str | None = None
+    gender_presentation: str | None = None
+    visual_identity: str | None = None
+    voice_dna: str | None = None
+    content_goal: str | None = None
+    status: str | None = None
+    tags: list[str] | None = None
+    linked_campaigns: list[str] | None = None
 
 class YouTubeContent(BaseModel):
     channel_id: str | None = None
@@ -258,6 +277,27 @@ def company() -> dict[str, Any]:
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
 
+
+@app.get("/api/personas")
+def personas() -> dict[str, Any]:
+    return {"personas": list_personas()}
+
+@app.post("/api/personas")
+def persona_create(payload: PersonaProfile) -> dict[str, Any]:
+    try:
+        return {"persona": create_persona(**payload.model_dump())}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+@app.patch("/api/personas/{persona_id}")
+def persona_update(persona_id: str, payload: PersonaProfileUpdate) -> dict[str, Any]:
+    try:
+        item = update_persona(persona_id, payload.model_dump(exclude_unset=True))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    if not item:
+        raise HTTPException(status_code=404, detail="Persona not found")
+    return {"persona": item}
 
 @app.get("/api/facebook/pages")
 def facebook_pages() -> dict[str, Any]:
