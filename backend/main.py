@@ -121,6 +121,7 @@ def control_center() -> dict[str, Any]:
         "tasks": {"total_recent": len(tasks), "by_status": counts},
         "workforce": workforce_summary(),
         "reports": len(list_agent_reports(limit=200)),
+        "approvals": {"pending": len(list_approvals("pending", 200)), "total": len(list_approvals(limit=200))},
         "youtube": {"registered_channels": len(channels), "oauth": oauth_status()},
         "facebook": {"registered_pages": len(pages), "state": "manual_registry_only"},
         "ghost_mode": ghost_mode_status(),
