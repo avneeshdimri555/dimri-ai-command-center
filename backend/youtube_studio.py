@@ -22,6 +22,15 @@ def init_youtube_tables():
           updated_at TEXT NOT NULL, video_id TEXT, video_url TEXT,
           published_at TEXT, publish_error TEXT
         );
+        CREATE TABLE IF NOT EXISTS youtube_channel_automation (
+          channel_id TEXT PRIMARY KEY, content_brief TEXT NOT NULL,
+          shorts_per_day INTEGER NOT NULL DEFAULT 1,
+          long_videos_per_week INTEGER NOT NULL DEFAULT 1,
+          mode TEXT NOT NULL DEFAULT 'approval',
+          enabled INTEGER NOT NULL DEFAULT 0,
+          updated_at TEXT NOT NULL,
+          FOREIGN KEY(channel_id) REFERENCES youtube_channels(channel_id) ON DELETE CASCADE
+        );
         """)
 
 def list_channels():
@@ -90,3 +99,25 @@ def mark_publish_error(content_id, error):
 
 init_youtube_tables()
 _ensure_content_columns()
+
+
+def get_channel_automation(channel_id):
+    with connect() as conn:
+        row=conn.execute("SELECT * FROM youtube_channel_automation WHERE channel_id=?",(channel_id,)).fetchone()
+    if not row: return None
+    item=dict(row);item["enabled"]=bool(item["enabled"]);return item
+
+
+def save_channel_automation(channel_id, content_brief, shorts_per_day=1,
+                            long_videos_per_week=1, mode="approval", enabled=False):
+    channel=next((x for x in list_channels() if x["channel_id"]==channel_id),None)
+    if not channel:return None
+    timestamp=_now()
+    with connect() as conn:
+        conn.execute(
+            "INSERT INTO youtube_channel_automation (channel_id,content_brief,shorts_per_day,long_videos_per_week,mode,enabled,updated_at) VALUES (?,?,?,?,?,?,?) "
+            "ON CONFLICT(channel_id) DO UPDATE SET content_brief=excluded.content_brief,shorts_per_day=excluded.shorts_per_day,long_videos_per_week=excluded.long_videos_per_week,mode=excluded.mode,enabled=excluded.enabled,updated_at=excluded.updated_at",
+            (channel_id,content_brief.strip(),shorts_per_day,long_videos_per_week,mode,int(enabled),timestamp))
+        conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)",
+                     (str(uuid4()),"youtube_automation_saved","Founder",channel_id,timestamp))
+    return get_channel_automation(channel_id)
