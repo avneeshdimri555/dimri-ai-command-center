@@ -629,5 +629,6 @@ function openDivision(id){
 
 document.querySelectorAll('[data-division]').forEach(el=>{const go=()=>openDivision(el.dataset.division);el.addEventListener('click',go);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}})});
 </script>
+<!-- Deploy refresh: keep the existing God Board and integrated Persona Studio route together. -->
 </body>
 </html>
