@@ -37,6 +37,10 @@ def init_db() -> None:
             id TEXT PRIMARY KEY, event TEXT NOT NULL, actor TEXT NOT NULL,
             details TEXT, created_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS agent_reports (
+            id TEXT PRIMARY KEY, agent_id TEXT NOT NULL, report_type TEXT NOT NULL,
+            summary TEXT NOT NULL, status TEXT NOT NULL, created_at TEXT NOT NULL
+        );
         """)
 
 
