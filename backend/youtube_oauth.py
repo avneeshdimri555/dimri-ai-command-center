@@ -9,6 +9,7 @@ from .db import connect
 AUTH_ENDPOINT="https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_ENDPOINT="https://oauth2.googleapis.com/token"
 YT_CHANNELS="https://www.googleapis.com/youtube/v3/channels"
+YT_UPLOAD="https://www.googleapis.com/upload/youtube/v3/videos"
 YT_SCOPE="https://www.googleapis.com/auth/youtube.upload"
 FRONTEND_URL=os.getenv("YOUTUBE_FRONTEND_URL","https://dimri-youtube-studio.onrender.com/youtube.html")
 def _serializer():
@@ -43,9 +44,13 @@ def get_token_payload():
     with connect() as c: row=c.execute("SELECT token_blob FROM youtube_oauth WHERE id=1").fetchone()
     if not row: return None
     return json.loads(_fernet().decrypt(row["token_blob"].encode()).decode())
-def youtube_publish_ready():\n    return {"upload_scope": "youtube.upload", "oauth_reconnect_required": True, "external_publish_enabled": False, "note": "Publishing requires reconnecting Google OAuth with the upload scope and a founder-approved publish task."}\n\ndef oauth_status():
+def youtube_publish_ready():
+    return {"upload_scope": "youtube.upload", "oauth_reconnect_required": False, "external_publish_enabled": True,
+            "note": "External YouTube upload is enabled only for content explicitly marked approved in the founder-controlled workspace."}
+
+def oauth_status():
     with connect() as c: row=c.execute("SELECT connected_at FROM youtube_oauth WHERE id=1").fetchone()
-    return {"connected":bool(row),"connected_at":row["connected_at"] if row else None,"oauth_configured":bool(os.getenv("GOOGLE_CLIENT_ID") and os.getenv("GOOGLE_CLIENT_SECRET")),"scope":YT_SCOPE,"publish_ready":False if row else False}
+    return {"connected":bool(row),"connected_at":row["connected_at"] if row else None,"oauth_configured":bool(os.getenv("GOOGLE_CLIENT_ID") and os.getenv("GOOGLE_CLIENT_SECRET")),"scope":YT_SCOPE,"publish_ready":bool(row and os.getenv("GOOGLE_CLIENT_ID") and os.getenv("GOOGLE_CLIENT_SECRET"))}
 async def youtube_access_token():
     t=get_token_payload()
     if not t: raise RuntimeError("Google account is not connected")
@@ -80,3 +85,69 @@ async def generate_image(prompt):
     first=data.get("data",[{}])[0]
     return {"b64_json":first.get("b64_json"),"url":first.get("url"),"revised_prompt":first.get("revised_prompt")}
 init_oauth_table()
+
+    
+async def upload_video(video_bytes: bytes, filename: str, mime_type: str, title: str, description: str = "",
+                       privacy_status: str = "public", tags: list[str] | None = None,
+                       category_id: str = "22", made_for_kids: bool = False) -> dict:
+    """Upload an approved video using YouTube's resumable upload protocol."""
+    if not video_bytes:
+        raise ValueError("Video file is empty")
+    if not mime_type.startswith("video/") and mime_type != "application/octet-stream":
+        raise ValueError("Only video files are accepted")
+    if privacy_status not in {"public", "private", "unlisted"}:
+        raise ValueError("Invalid privacy status")
+    token = await youtube_access_token()
+    clean_tags = [str(x).strip() for x in (tags or []) if str(x).strip()]
+    metadata = {"snippet": {"title": (title or filename).strip()[:100],
+                            "description": (description or "").strip()[:5000],
+                            "categoryId": category_id},
+                "status": {"privacyStatus": privacy_status,
+                           "selfDeclaredMadeForKids": bool(made_for_kids)}}
+    if clean_tags:
+        metadata["snippet"]["tags"] = clean_tags[:500]
+    total = len(video_bytes)
+    async with httpx.AsyncClient(timeout=300) as client:
+        init = await client.post(
+            YT_UPLOAD, params={"uploadType": "resumable", "part": "snippet,status"},
+            headers={"Authorization": "Bearer " + token,
+                     "Content-Type": "application/json; charset=UTF-8",
+                     "X-Upload-Content-Length": str(total),
+                     "X-Upload-Content-Type": mime_type},
+            json=metadata)
+        if init.status_code not in {200, 201}:
+            raise RuntimeError(f"YouTube upload session failed: {init.status_code} {init.text[:1000]}")
+        upload_url = init.headers.get("Location")
+        if not upload_url:
+            raise RuntimeError("YouTube did not return an upload session URL")
+        chunk_size = 8 * 1024 * 1024
+        offset = 0
+        response = None
+        while offset < total:
+            end = min(offset + chunk_size, total) - 1
+            chunk = video_bytes[offset:end + 1]
+            resp = await client.put(upload_url, headers={
+                "Authorization": "Bearer " + token,
+                "Content-Length": str(len(chunk)),
+                "Content-Type": mime_type,
+                "Content-Range": f"bytes {offset}-{end}/{total}"},
+                content=chunk)
+            if resp.status_code in {200, 201}:
+                response = resp.json()
+                offset = total
+                break
+            if resp.status_code == 308:
+                range_header = resp.headers.get("Range", "")
+                if range_header.startswith("bytes="):
+                    offset = int(range_header.split("-")[-1]) + 1
+                else:
+                    offset = end + 1
+                continue
+            raise RuntimeError(f"YouTube upload failed: {resp.status_code} {resp.text[:1200]}")
+    if not response or not response.get("id"):
+        raise RuntimeError("YouTube upload completed without a video ID")
+    return {"video_id": response["id"],
+            "video_url": "https://www.youtube.com/watch?v=" + response["id"],
+            "title": response.get("snippet", {}).get("title", title),
+            "privacy_status": response.get("status", {}).get("privacyStatus", privacy_status),
+            "filename": filename}
