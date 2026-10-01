@@ -9,7 +9,7 @@ from .db import connect
 AUTH_ENDPOINT="https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_ENDPOINT="https://oauth2.googleapis.com/token"
 YT_CHANNELS="https://www.googleapis.com/youtube/v3/channels"
-YT_SCOPE="https://www.googleapis.com/auth/youtube.readonly"
+YT_SCOPE="https://www.googleapis.com/auth/youtube.upload"
 FRONTEND_URL=os.getenv("YOUTUBE_FRONTEND_URL","https://dimri-youtube-studio.onrender.com/youtube.html")
 def _serializer():
     secret=os.getenv("DIMRI_OAUTH_STATE_SECRET")
@@ -43,9 +43,9 @@ def get_token_payload():
     with connect() as c: row=c.execute("SELECT token_blob FROM youtube_oauth WHERE id=1").fetchone()
     if not row: return None
     return json.loads(_fernet().decrypt(row["token_blob"].encode()).decode())
-def oauth_status():
+def youtube_publish_ready():\n    return {"upload_scope": "youtube.upload", "oauth_reconnect_required": True, "external_publish_enabled": False, "note": "Publishing requires reconnecting Google OAuth with the upload scope and a founder-approved publish task."}\n\ndef oauth_status():
     with connect() as c: row=c.execute("SELECT connected_at FROM youtube_oauth WHERE id=1").fetchone()
-    return {"connected":bool(row),"connected_at":row["connected_at"] if row else None,"oauth_configured":bool(os.getenv("GOOGLE_CLIENT_ID") and os.getenv("GOOGLE_CLIENT_SECRET"))}
+    return {"connected":bool(row),"connected_at":row["connected_at"] if row else None,"oauth_configured":bool(os.getenv("GOOGLE_CLIENT_ID") and os.getenv("GOOGLE_CLIENT_SECRET")),"scope":YT_SCOPE,"publish_ready":False if row else False}
 async def youtube_access_token():
     t=get_token_payload()
     if not t: raise RuntimeError("Google account is not connected")
