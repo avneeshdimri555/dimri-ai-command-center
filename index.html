@@ -335,6 +335,7 @@ async function loadWorkforce(){
   const r=await fetch(API_BASE+'/api/workforce');
   const d=await r.json();
   const core=d.core_team||[], divs=d.divisions||[], all=d.agents||[];
+  if($('orgAgentCount'))$('orgAgentCount').textContent=all.length.toLocaleString('en-IN');
   $('coreTeamMetric').textContent=core.length;
   $('divisionMetric').textContent=divs.length;
   $('leadAgentMetric').textContent=all.filter(a=>a.level!=='core'&&a.role==='lead').length;
