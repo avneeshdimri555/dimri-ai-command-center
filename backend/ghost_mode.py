@@ -9,9 +9,9 @@ import re
 from typing import Any
 
 RISK_PATTERNS = {
-    "numeric_claim": re.compile(r"(?<!\\w)(?:\\d[\\d,.%]*|\\$\\s?\\d+|₹\\s?\\d+)(?!\\w)", re.I),
-    "absolute_claim": re.compile(r"\\b(always|never|all|none|everyone|nobody|guaranteed|proven|100%)\\b", re.I),
-    "health_or_finance": re.compile(r"\\b(cure|treat|diagnose|risk-free|guaranteed returns|investment advice)\\b", re.I),
+    "numeric_claim": re.compile(r"(?<!\w)(?:\d[\d,.%]*|\$\s?\d+|₹\s?\d+)(?!\w)", re.I),
+    "absolute_claim": re.compile(r"\b(always|never|all|none|everyone|nobody|guaranteed|proven|100%)\b", re.I),
+    "health_or_finance": re.compile(r"\b(cure|treat|diagnose|risk-free|guaranteed returns|investment advice)\b", re.I),
 }
 
 
