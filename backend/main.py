@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
 from .task_queue import queue
-from .db import audit_events, add_agent_report, list_agent_reports
+from .db import audit_events, add_agent_report, list_agent_reports, add_approval, list_approvals, decide_approval
 from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
@@ -82,6 +82,28 @@ class GhostReview(BaseModel):
 def health() -> dict[str, Any]:
     return {"ok": True, "service": "dimri-ai-company-os", "version":"0.4.0", "time": datetime.now(timezone.utc).isoformat()}
 
+@app.get("/api/approvals")
+def approvals(status: str | None = None, limit: int = 100) -> dict[str, Any]:
+    return {"approvals": list_approvals(status, max(1, min(limit, 200)))}
+
+class ApprovalDecision(BaseModel):
+    status: str
+    decision_note: str = ""
+
+@app.patch("/api/approvals/{approval_id}")
+def approval_decision(approval_id: str, payload: ApprovalDecision) -> dict[str, Any]:
+    try:
+        item = decide_approval(approval_id, payload.status, payload.decision_note.strip())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    if not item:
+        raise HTTPException(status_code=404, detail="Approval not found")
+    if item["status"] == "approved":
+        target = next((t for t in queue.list() if t["id"] == item["task_id"]), None)
+        if target and target["status"] == "awaiting_execution":
+            queue.update(target["id"], "approved", "Founder approved action. Awaiting execution worker.")
+    return {"approval": item}
+
 @app.get("/api/control-center")
 def control_center() -> dict[str, Any]:
     tasks = queue.list()
@@ -157,11 +179,15 @@ def process_task(task_id: str) -> dict[str, Any]:
         "report": "Coordinator result recorded in task and audit log",
     }
     status = "awaiting_execution"
+    approval = None
+    if founder_approval:
+        approval = add_approval(task_id, "consequential_action", "Command requests an external or irreversible action.")
     result = {"type": "coordination_plan", "plan": plan, "execution_started": False,
               "reason": "No external side effect was performed by the coordinator.",
-              "founder_approval_required": founder_approval}
+              "founder_approval_required": founder_approval,
+              "approval_id": approval["id"] if approval else None}
     updated = queue.update(task_id, status, __import__("json").dumps(result))
-    return {"processed": True, "task": updated, "routes": routes, "plan": plan}
+    return {"processed": True, "task": updated, "routes": routes, "plan": plan, "approval": approval}
 
 
 @app.patch("/api/tasks/{task_id}")
