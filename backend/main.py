@@ -85,7 +85,7 @@ def health() -> dict[str, Any]:
 @app.get("/api/control-center")
 def control_center() -> dict[str, Any]:
     tasks = queue.list()
-    counts = {"queued": 0, "in_progress": 0, "completed": 0, "failed": 0, "cancelled": 0}
+    counts = {"queued": 0, "in_progress": 0, "awaiting_execution": 0, "completed": 0, "failed": 0, "cancelled": 0}
     for task in tasks:
         status = task.get("status")
         if status in counts:
@@ -135,6 +135,34 @@ def create_command(command: Command) -> dict[str, Any]:
 @app.get("/api/tasks")
 def tasks(status: str | None = None) -> dict[str, Any]:
     return {"tasks": queue.list(status), "count": len(queue.list(status))}
+
+@app.post("/api/tasks/{task_id}/process")
+def process_task(task_id: str) -> dict[str, Any]:
+    task = next((t for t in queue.list() if t["id"] == task_id), None)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    if task["status"] not in {"queued", "awaiting_execution"}:
+        return {"task": task, "processed": False, "note": "Task is not ready for coordinator processing."}
+
+    from .brain import route_command
+    routes = route_command(task["command"])
+    text_command = task["command"].lower()
+    sensitive_terms = ("publish", "send", "pay", "purchase", "delete", "deploy", "connect", "post")
+    founder_approval = any(term in text_command for term in sensitive_terms)
+    plan = {
+        "understand": task["command"],
+        "delegation": routes,
+        "execution": "worker_runtime_required" if not founder_approval else "founder_approval_required",
+        "verification": "Ghost Mode/source QA where factual claims are involved",
+        "report": "Coordinator result recorded in task and audit log",
+    }
+    status = "awaiting_execution"
+    result = {"type": "coordination_plan", "plan": plan, "execution_started": False,
+              "reason": "No external side effect was performed by the coordinator.",
+              "founder_approval_required": founder_approval}
+    updated = queue.update(task_id, status, __import__("json").dumps(result))
+    return {"processed": True, "task": updated, "routes": routes, "plan": plan}
+
 
 @app.patch("/api/tasks/{task_id}")
 def task_update(task_id: str, update: TaskUpdate) -> dict[str, Any]:
