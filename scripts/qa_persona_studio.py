@@ -70,7 +70,8 @@ def main():
         ("TESTER MODE · MOCK OUTPUTS", "explicit demo mode"),
         ("Persona DNA", "Persona DNA workflow"),
         ("Voice Studio", "Voice Studio"),
-        ("Rights & Safety", "rights and safety"),\n        ("Product DNA", "Product DNA workspace"),
+        ("Rights & Safety", "rights and safety"),
+        ("Product DNA", "Product DNA workspace"),
     ]:
         if marker not in html:
             ok = fail("missing " + label) and ok
