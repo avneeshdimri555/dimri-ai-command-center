@@ -1,0 +1,17 @@
+name: DIMRI AI Worker
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run approved DIMRI tasks
+        env:
+          DIMRI_API_URL: https://dimri-ai-god-board-api.onrender.com
+        run: |
+          curl --fail --silent --show-error \
+            -X POST "$DIMRI_API_URL/api/worker/run?limit=5"
