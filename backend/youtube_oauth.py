@@ -11,7 +11,7 @@ TOKEN_ENDPOINT="https://oauth2.googleapis.com/token"
 YT_CHANNELS="https://www.googleapis.com/youtube/v3/channels"
 YT_UPLOAD="https://www.googleapis.com/upload/youtube/v3/videos"
 YT_SCOPE="https://www.googleapis.com/auth/youtube.upload"
-FRONTEND_URL=os.getenv("YOUTUBE_FRONTEND_URL","https://dimri-youtube-studio.onrender.com/youtube.html")
+FRONTEND_URL=os.getenv("YOUTUBE_FRONTEND_URL","https://aishani-enterprises-god-board.onrender.com/divisions/media/youtube.html")
 def _serializer():
     secret=os.getenv("DIMRI_OAUTH_STATE_SECRET")
     if not secret: raise RuntimeError("DIMRI_OAUTH_STATE_SECRET is not configured")
