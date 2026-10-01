@@ -12,6 +12,7 @@ from .marketplaces import marketplace_status
 from .integrations import integration_status
 from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image
+from .ghost_mode import review_claims, status as ghost_mode_status
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -54,6 +55,16 @@ class DigitalProduct(BaseModel):
     currency: str = "USD"
     asset_path: str | None = None
     marketplaces: str = "gumroad"
+
+class GhostClaim(BaseModel):
+    claim: str
+    source_name: str = ""
+    source_url: str = ""
+    evidence_note: str = ""
+
+class GhostReview(BaseModel):
+    content_title: str = ""
+    claims: list[GhostClaim] = []
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
@@ -144,6 +155,16 @@ def company() -> dict[str, Any]:
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
 
+
+@app.get("/api/ghost/status")
+def ghost_status() -> dict[str, Any]:
+    return ghost_mode_status()
+
+@app.post("/api/ghost/review")
+def ghost_review(payload: GhostReview) -> dict[str, Any]:
+    result = review_claims([claim.model_dump() for claim in payload.claims])
+    result["content_title"] = payload.content_title
+    return result
 
 @app.get("/api/youtube/status")
 def youtube_status() -> dict[str, Any]:
