@@ -10,7 +10,7 @@ from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
 from .integrations import integration_status
-from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content, mark_published, mark_publish_error
+from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content, mark_published, mark_publish_error, get_channel_automation, save_channel_automation
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image, upload_video
 from .ghost_mode import review_claims, status as ghost_mode_status
 from .agents import list_agents, get_agent, workforce_summary, CORE_TEAM, DIVISIONS
@@ -79,6 +79,13 @@ class YouTubeContent(BaseModel):
 
 class YouTubeContentUpdate(BaseModel):
     status: str
+
+class YouTubeAutomation(BaseModel):
+    content_brief: str
+    shorts_per_day: int = 1
+    long_videos_per_week: int = 1
+    mode: str = "approval"
+    enabled: bool = False
 
 class DigitalProduct(BaseModel):
     title: str
@@ -424,6 +431,28 @@ def youtube_add_channel(channel: YouTubeChannel) -> dict[str, Any]:
         return {"channel": add_channel(**channel.model_dump())}
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+
+@app.get("/api/youtube/channels/{channel_id}/automation")
+def youtube_automation_get(channel_id: str) -> dict[str, Any]:
+    if not any(c["channel_id"] == channel_id for c in list_channels()):
+        raise HTTPException(status_code=404, detail="Channel not found")
+    return {"automation": get_channel_automation(channel_id), "execution_state": "configuration_only",
+            "note": "Channel brief and cadence are saved preferences. Automated production/publishing requires media-generation providers, OAuth permissions, and a production scheduler."}
+
+@app.put("/api/youtube/channels/{channel_id}/automation")
+def youtube_automation_put(channel_id: str, payload: YouTubeAutomation) -> dict[str, Any]:
+    if not 0 <= payload.shorts_per_day <= 10 or not 0 <= payload.long_videos_per_week <= 7:
+        raise HTTPException(status_code=400, detail="Limits: up to 10 Shorts/day and 7 long videos/week.")
+    if payload.mode not in {"draft", "approval", "auto"}:
+        raise HTTPException(status_code=400, detail="Mode must be draft, approval or auto.")
+    if not payload.content_brief.strip():
+        raise HTTPException(status_code=400, detail="Add a channel content brief.")
+    item = save_channel_automation(channel_id, payload.content_brief.strip(),
+        payload.shorts_per_day, payload.long_videos_per_week, payload.mode, payload.enabled)
+    if not item:
+        raise HTTPException(status_code=404, detail="Channel not found")
+    return {"automation": item, "execution_state": "configuration_only",
+            "note": "Preferences saved only. No video has been generated or published; live automation dependencies remain."}
 
 @app.get("/api/youtube/content")
 def youtube_content() -> dict[str, Any]:
