@@ -79,24 +79,22 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
 </section>
 
 <section class="view" data-view="structure">
-<div class="hero"><div><h1>🏢 Aishani Enterprises → DIMRI Studio</h1><p>Five commercial pillars powered by one shared DIMRI AI Company Brain.</p></div><button class="btn" onclick="showView('brain')">Open Company Brain</button></div>
-<div class="panel" style="margin-bottom:15px"><div class="panel-head"><h2>Corporate Map</h2><span class="chip green">One Company Brain</span></div>
-<div class="flow" style="flex-wrap:wrap"><div class="f">👤 Founder</div><span class="arrow">→</span><div class="f">🏢 Aishani Enterprises<br>Parent</div><span class="arrow">→</span><div class="f">⚡ DIMRI Studio<br>Operating Studio</div><span class="arrow">→</span><div class="f">🧠 DIMRI AI OS<br>Shared Intelligence</div></div></div>
-<div class="grid three">
-<div class="dept"><div class="dept-icon">🎬</div><h3>1 · DIMRI Media</h3><p>YouTube + Instagram, Ghost Mode, Shorts/Reels, long-form, thumbnails, SEO, publishing, monetization and analytics.</p><div class="count">Content Engine</div><div class="bar"><i style="width:82%"></i></div></div>
-<div class="dept"><div class="dept-icon">🛍️</div><h3>2 · DIMRI Digital Commerce</h3><p>E-books, stickers, printables, templates, Gumroad, eBay, Shopify, Pinterest, blogging, SEO and affiliate revenue.</p><div class="count">Digital Product Engine</div><div class="bar"><i style="width:74%"></i></div></div>
-<div class="dept"><div class="dept-icon">📱</div><h3>3 · DIMRI Apps</h3><p>Develop, test, monitor, market and grow VANI, DermaVeda, YOU AI and future apps.</p><div class="count">Software Portfolio</div><div class="bar"><i style="width:68%"></i></div></div>
-<div class="dept"><div class="dept-icon">🎮</div><h3>4 · DIMRI Games</h3><p>Game ideas, GDD, coding, art, audio, QA, publishing, user acquisition, monetization, analytics and live ops.</p><div class="count">Game Studio</div><div class="bar"><i style="width:48%"></i></div></div>
-<div class="dept"><div class="dept-icon">🚀</div><h3>5 · DIMRI Products & Services</h3><p>The existing 50 commercial AI offers, organized into creator, marketing, sales, SMB and creative/consumer categories.</p><div class="count">50-offer portfolio</div><div class="bar"><i style="width:61%"></i></div></div>
-<div class="dept"><div class="dept-icon">🧩</div><h3>Shared Company Services</h3><p>CEO, memory, task queue, finance, operations, security, legal support, analytics, integrations and founder approvals.</p><div class="count">Cross-pillar infrastructure</div><div class="bar"><i style="width:90%"></i></div></div>
+<div class="hero"><div><h1>🏢 Aishani Enterprises — Company Structure</h1><p>Founder-controlled parent company with six operating divisions and one shared DIMRI AI workforce.</p></div><button class="btn" onclick="showView('agents')">Open AI Workforce</button></div>
+<div class="panel" style="margin-bottom:15px"><div class="panel-head"><h2>Corporate Map</h2><span class="chip green">Founder → AI CEO → Divisions</span></div>
+<div class="flow" style="flex-wrap:wrap"><div class="f">👤 Avneesh Dimri<br>Founder</div><span class="arrow">→</span><div class="f">🏢 Aishani Enterprises<br>Parent Company</div><span class="arrow">→</span><div class="f">🧠 DIMRI AI — God Board<br>Central AI CEO</div><span class="arrow">→</span><div class="f">👥 Division Leads<br>Specialist Pods</div></div></div>
+<div class="grid three" id="divisionGrid">
+<div class="dept"><div class="dept-icon">⚡</div><h3>1 · Digital AI Services</h3><p>External client services, UGC, AI content, automation, sales and delivery.</p><div class="count">Division Lead + specialists</div><div class="bar"><i style="width:72%"></i></div></div>
+<div class="dept"><div class="dept-icon">🧬</div><h3>2 · DIMRI Persona Studio</h3><p>Adult fictional male/female AI models, face/body styling, identity, voice, images, videos, UGC and model licensing.</p><div class="count">Model Factory</div><div class="bar"><i style="width:78%"></i></div></div>
+<div class="dept"><div class="dept-icon">📺</div><h3>3 · DIMRI Channel Network</h3><p>YouTube, Instagram and Facebook channels/accounts with research, ideas, production, scheduling, publishing and analytics.</p><div class="count">Content & Social Operations</div><div class="bar"><i style="width:76%"></i></div></div>
+<div class="dept"><div class="dept-icon">📱</div><h3>4 · DIMRI Apps</h3><p>AI app portfolio: research, product management, UX, coding, integrations, testing, release and support.</p><div class="count">Apps & SaaS</div><div class="bar"><i style="width:65%"></i></div></div>
+<div class="dept"><div class="dept-icon">🛍️</div><h3>5 · DIMRI Digital Products</h3><p>E-books, stories, forms, templates, stickers, printables, prompt packs, assets, listings and digital delivery.</p><div class="count">Digital Commerce</div><div class="bar"><i style="width:68%"></i></div></div>
+<div class="dept"><div class="dept-icon">🎓</div><h3>6 · DIMRI Education</h3><p>Courses, tutorials, learning products, workshops, community, assessments and support.</p><div class="count">Education Business</div><div class="bar"><i style="width:58%"></i></div></div>
 </div>
 <div class="grid two" style="margin-top:15px">
-<div class="panel"><div class="panel-head"><h2>DIMRI Apps Portfolio</h2><span class="tiny">Build → QA → Store → Growth</span></div><div class="list" id="structureApps"><div class="content-card"><b>VANI</b><p>Building · AI voice/language companion</p></div><div class="content-card"><b>DermaVeda</b><p>Planned · AI skin/face analysis</p></div><div class="content-card"><b>YOU AI</b><p>Planned · Personal AI assistant</p></div></div></div>
-<div class="panel"><div class="panel-head"><h2>Game Studio Modules</h2><span class="tiny">DIMRI Games</span></div><div class="chips"><span class="chip">Game Research</span><span class="chip">Game Design</span><span class="chip">Engineering</span><span class="chip">Art & Animation</span><span class="chip">Audio</span><span class="chip">QA</span><span class="chip">Publishing</span><span class="chip">User Acquisition</span><span class="chip">Monetization</span><span class="chip">Analytics</span><span class="chip">Live Ops</span><span class="chip">Community</span></div></div>
+<div class="panel"><div class="panel-head"><h2>Shared Core Functions</h2><span class="tiny">Company-wide</span></div><div class="chips"><span class="chip">AI CEO</span><span class="chip">Research & Intelligence</span><span class="chip">Trends & Platform Intelligence</span><span class="chip">Marketing</span><span class="chip">Sales & Business Development</span><span class="chip">Finance</span><span class="chip">Technology & IT</span><span class="chip">Creative & Production</span><span class="chip">Editing</span><span class="chip">Quality & Review</span><span class="chip">Security & Compliance</span><span class="chip">Operations</span><span class="chip">Automation & Integrations</span><span class="chip">Customer Success</span><span class="chip">Business Analytics</span></div></div>
+<div class="panel"><div class="panel-head"><h2>Operating Rule</h2><span class="chip green">Centralized</span></div><div class="rule"><b>One core AI workforce.</b> Division Leads own their business areas; specialist agents execute their roles; shared Finance, Security, Research, QA, Technology and Operations support every division. Founder approval remains required for consequential external actions.</div></div>
 </div>
-<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Commercial 50 · Portfolio Map</h2><span class="tiny">Pillar 5</span></div><div class="grid five" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
-<div class="content-card"><b>01–10</b><p>Content & Creator</p></div><div class="content-card"><b>11–20</b><p>Marketing & Growth</p></div><div class="content-card"><b>21–30</b><p>Sales & CRM</p></div><div class="content-card"><b>31–40</b><p>SMB / Industry Solutions</p></div><div class="content-card"><b>41–50</b><p>Creative / Consumer</p></div></div></div>
-<div class="footer">Aishani Enterprises is the parent umbrella; DIMRI Studio is the operating studio. DIMRI AI is the internal AI operating layer connecting all five pillars.</div>
+<div class="footer">Aishani Enterprises is the parent company. DIMRI AI is the internal intelligence and orchestration layer. DIMRI Studio is the creative/model operating environment, not a separate parent company.</div>
 </section>
 
 <section class="view" data-view="brain">
@@ -120,8 +118,19 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
 </section>
 
 <section class="view" data-view="agents">
-<div class="hero"><div><h1>AI Workforce</h1><p>One DIMRI CEO coordinates department heads and specialist agents. Work is delegated by capability, not by one overloaded agent.</p></div><button class="btn" onclick="toast('Agent Factory: design queue created')">+ Design Agent</button></div>
-<div class="grid agent-grid" id="agentGrid"></div>
+<div class="hero"><div><h1>🤖 AI Workforce — Core Team + Division Pods</h1><p>15 core leadership roles coordinate specialized division agents. All roles report through the AI CEO to the Founder.</p></div><button class="btn" onclick="loadWorkforce()">↻ Refresh Workforce</button></div>
+<div class="grid metrics">
+<div class="metric"><div class="label">Core Team</div><div class="num" id="coreTeamMetric">15</div><div class="delta">company-wide heads</div></div>
+<div class="metric"><div class="label">Divisions</div><div class="num" id="divisionMetric">6</div><div class="delta">operating pods</div></div>
+<div class="metric"><div class="label">Division Leads</div><div class="num" id="leadAgentMetric">6</div><div class="delta">one per division</div></div>
+<div class="metric"><div class="label">Specialists</div><div class="num" id="specialistMetric">37</div><div class="delta">configured roles</div></div>
+<div class="metric"><div class="label">Reports</div><div class="num" id="reportMetric">0</div><div class="delta">stored reports</div></div>
+<div class="metric"><div class="label">Execution</div><div class="num" style="font-size:18px">QUEUED</div><div class="delta">worker integration next</div></div>
+</div>
+<div class="panel"><div class="panel-head"><h2>Core AI Leadership</h2><span class="chip green">Reports to AI CEO / Founder</span></div><div class="grid agent-grid" id="coreAgentGrid"></div></div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Division Pods</h2><span class="tiny">Lead + specialist agents</span></div><div class="grid two" id="divisionAgentGrid"></div></div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Latest Agent Reports</h2><span class="tiny">Persisted workforce reports</span></div><div class="list" id="agentReports"><div class="empty">No agent reports submitted yet.</div></div></div>
+<div class="footer">These are configured AI roles. The current backend queues tasks and stores reports; autonomous model/tool execution will be enabled only after a worker runtime and approved provider credentials are connected.</div>
 </section>
 
 <section class="view" data-view="ghost">
@@ -300,6 +309,30 @@ function $(id){return document.getElementById(id)}
 function showView(name){state.view=name;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===name));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));$('crumb').textContent=name.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showView(n.dataset.view));
 function renderAgents(){ $('agentGrid').innerHTML=agents.map(a=>'<div class="agent"><div class="agent-top"><div class="avatar">'+a[0]+'</div><div><h3>'+a[1]+'</h3><div class="status">● Ready / routed</div></div></div><p>'+a[3]+'</p><span class="tag">'+a[4]+'</span></div>').join('') }
+async function loadWorkforce(){
+ try{
+  const r=await fetch('http://localhost:8000/api/workforce');
+  const d=await r.json();
+  const core=d.core_team||[], divs=d.divisions||[], all=d.agents||[];
+  $('coreTeamMetric').textContent=core.length;
+  $('divisionMetric').textContent=divs.length;
+  $('leadAgentMetric').textContent=all.filter(a=>a.level!=='core'&&a.role==='lead').length;
+  $('specialistMetric').textContent=all.filter(a=>a.level!=='core'&&a.role==='specialist').length;
+  const byId=Object.fromEntries(all.map(a=>[a.id,a]));
+  $('coreAgentGrid').innerHTML=core.map(a=>'<div class="agent"><div class="agent-top"><div class="avatar">🧠</div><div><h3>'+a.name+'</h3><div class="status">● '+a.department+'</div></div></div><p>'+a.purpose+'</p><div class="chips">'+a.capabilities.slice(0,4).map(x=>'<span class="chip">'+x+'</span>').join('')+'</div></div>').join('');
+  $('divisionAgentGrid').innerHTML=divs.map(d=>{
+    const lead=byId[d.lead];
+    const team=all.filter(a=>a.division===d.id);
+    return '<div class="panel"><div class="panel-head"><h2>'+d.name+'</h2><span class="tag">'+team.length+' roles</span></div><p class="tiny">'+d.purpose+'</p><div class="content-card"><b>Lead · '+(lead?lead.name:'Unassigned')+'</b><p>'+(lead?lead.purpose:'No lead configured')+'</p></div><div class="list" style="margin-top:9px">'+team.filter(a=>a.role==='specialist').map(a=>'<div class="content-card"><b>'+a.name+'</b><p>'+a.purpose+'</p></div>').join('')+'</div></div>';
+  }).join('');
+  const rr=await fetch('http://localhost:8000/api/workforce/reports?limit=12');
+  const rd=await rr.json();
+  $('reportMetric').textContent=(rd.reports||[]).length;
+  $('agentReports').innerHTML=(rd.reports||[]).length?(rd.reports.map(x=>'<div class="content-card"><div class="lead-row"><div><b>'+x.agent_id+'</b><p>'+x.summary+'</p></div><span class="tag">'+x.status+'</span></div><div class="tiny">'+x.report_type+' · '+x.created_at+'</div></div>').join('')):'<div class="empty">No agent reports submitted yet.</div>';
+ }catch(e){
+  $('agentReports').innerHTML='<div class="empty">Backend not connected. Workforce UI will load live data after the FastAPI service is deployed.</div>';
+ }
+}
 function renderProducts(){let q=($('productSearch').value||'').toLowerCase(),cat=$('productCat').value;let arr=products.filter(p=>(cat==='all'||p[1]===cat)&&p[0].toLowerCase().includes(q));$('productGrid').innerHTML=arr.map((p,i)=>'<div class="product"><span class="numtag">#'+(products.indexOf(p)+1)+' · '+p[1]+'</span><h3>'+p[0]+'</h3><p>AI-powered product/service blueprint ready for discovery.</p><span class="tag">Mapped</span></div>').join('')||'<div class="empty">No matching products.</div>'}
 function renderLeads(){ $('leadList').innerHTML=state.leads.map(l=>'<div class="lead"><div class="lead-row"><div><h3>'+l[0]+'</h3><p>'+l[1]+'</p></div><span class="tag '+(l[2]==='Hot'?'hot':'')+'">'+l[2]+'</span></div></div>').join('') }
 function renderClients(){ $('clientList').innerHTML=state.clients.map(c=>'<div class="client"><div class="client-row"><div><h3>'+c[0]+'</h3><p>'+c[1]+'</p></div><span class="tag">'+c[2]+'</span></div><div class="bar" style="margin-top:12px"><i style="width:'+c[3]+'"></i></div><div class="tiny" style="margin-top:6px">'+c[3]+' complete</div></div>').join('') }
@@ -320,7 +353,7 @@ function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addAct
 document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
 $('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
 $('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products');else if(q.includes('structure')||q.includes('aishani')||q.includes('pillar')||q.includes('game'))showView('structure')});
-renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();loadFactory();
+renderAgents();renderProducts();renderLeads();renderClients();renderContent();renderActivity();renderApprovals();loadFactory();loadWorkforce();
 
 async function createDigitalProduct(){
  const title=prompt('Product title','Cute Sticker Pack Vol. 01'); if(!title)return;
