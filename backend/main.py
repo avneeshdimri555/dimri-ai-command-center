@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .brain import memory, create_workflow, route_command
 from .task_queue import queue
-from .db import audit_events
+from .db import audit_events, add_agent_report, list_agent_reports
 from .app_registry import list_apps, list_pillars
 from .digital_products import create_product, list_products, publish_plan
 from .marketplaces import marketplace_status
@@ -13,7 +13,7 @@ from .integrations import integration_status
 from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image
 from .ghost_mode import review_claims, status as ghost_mode_status
-from .agents import list_agents, get_agent
+from .agents import list_agents, get_agent, workforce_summary, CORE_TEAM, DIVISIONS
 from .facebook_studio import list_pages as list_facebook_pages, add_page as add_facebook_page
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
@@ -162,7 +162,8 @@ def digital_product_publish_plan(product_id: str) -> dict[str, Any]:
 
 @app.get("/api/company")
 def company() -> dict[str, Any]:
-    return {"name":"DIMRI AI","mode":"Founder Controlled","departments":8,"planned_agents":90,"products_services":50,
+    return {"name":"Aishani Enterprises","operating_layer":"DIMRI AI — God Board","mode":"Founder Controlled",
+        "core_team":15,"divisions":6,"configured_agent_roles":len(list_agents()),"products_services":50,
         "platforms":["web","mobile","telegram"],
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
@@ -186,6 +187,32 @@ def agents() -> dict[str, Any]:
     roster = list_agents()
     return {"agents": roster, "count": len(roster), "execution_mode": "task_queue_only",
             "note": "Agent roles are configured internally. Dispatch queues work; it does not autonomously execute model, media, or publishing actions."}
+
+@app.get("/api/workforce")
+def workforce() -> dict[str, Any]:
+    return {"summary": workforce_summary(), "core_team": CORE_TEAM, "divisions": DIVISIONS, "agents": list_agents()}
+
+@app.get("/api/workforce/divisions")
+def workforce_divisions() -> dict[str, Any]:
+    return {"divisions": DIVISIONS}
+
+@app.get("/api/workforce/reports")
+def workforce_reports(agent_id: str | None = None, limit: int = 100) -> dict[str, Any]:
+    return {"reports": list_agent_reports(agent_id, max(1, min(limit, 200)))}
+
+class AgentReport(BaseModel):
+    agent_id: str
+    report_type: str = "daily"
+    summary: str
+    status: str = "submitted"
+
+@app.post("/api/workforce/reports")
+def workforce_report(payload: AgentReport) -> dict[str, Any]:
+    if not get_agent(payload.agent_id):
+        raise HTTPException(status_code=404, detail="Agent not found")
+    if not payload.summary.strip():
+        raise HTTPException(status_code=400, detail="Report summary cannot be empty")
+    return {"report": add_agent_report(payload.agent_id, payload.report_type, payload.summary.strip(), payload.status)}
 
 @app.post("/api/agents/dispatch")
 def agent_dispatch(payload: AgentDispatch) -> dict[str, Any]:
