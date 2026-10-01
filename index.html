@@ -287,7 +287,7 @@ body{background:radial-gradient(ellipse at 50% -20%,#183c5e 0%,#09172a 43%,#050b
 </section>
 
 <section class="view" data-view="aftersales">
-<div class="hero"><div><h1>♥ After-Sales Service</h1><p>Keep the customer successful after delivery — support, feedback, retention, renewals and expansion.</p></div><button class="btn" onclick="toast('After-sales review cycle started')">▶ Run Service Review</button></div>
+<div class="hero"><div><h1>♥ After-Sales Service</h1><p>Keep the customer successful after delivery — support, feedback, retention, renewals and expansion.</p></div><button class="btn" onclick="queueCompanyTask('Run after-sales review: identify open support items, delivery feedback, retention risks and follow-up tasks.','aftersales')">▶ Run Service Review</button></div>
 <div class="grid metrics">
 <div class="metric"><div class="label">Active Customers</div><div class="num">18</div><div class="delta">care plans running</div></div>
 <div class="metric"><div class="label">Open Issues</div><div class="num">7</div><div class="delta">AI triage active</div></div>
@@ -319,7 +319,7 @@ body{background:radial-gradient(ellipse at 50% -20%,#183c5e 0%,#09172a 43%,#050b
 </section>
 
 <section class="view" data-view="finance">
-<div class="hero"><div><h1>₹ Finance Command</h1><p>A dedicated AI finance team for visibility, controls, reporting and decision support.</p></div><button class="btn" onclick="toast('Finance close checklist started')">▶ Run Finance Cycle</button></div>
+<div class="hero"><div><h1>₹ Finance Command</h1><p>A dedicated AI finance team for visibility, controls, reporting and decision support.</p></div><button class="btn" onclick="queueCompanyTask('Prepare finance review: summarize recorded income, expenses, invoices, pending reconciliation and items requiring founder input.','finance')">▶ Run Finance Cycle</button></div>
 <div class="grid metrics">
 <div class="metric"><div class="label">Revenue</div><div class="num">₹1.8L</div><div class="delta">demo monthly view</div></div>
 <div class="metric"><div class="label">Expenses</div><div class="num">₹0.6L</div><div class="delta">tracked</div></div>
@@ -344,7 +344,7 @@ body{background:radial-gradient(ellipse at 50% -20%,#183c5e 0%,#09172a 43%,#050b
 </section>
 
 <section class="view" data-view="operations">
-<div class="hero"><div><h1>⚙ Operations Command</h1><p>The internal control layer that keeps every department coordinated and prevents work from getting stuck.</p></div><button class="btn" onclick="toast('Operations health check started')">▶ Run Ops Check</button></div>
+<div class="hero"><div><h1>⚙ Operations Command</h1><p>The internal control layer that keeps every department coordinated and prevents work from getting stuck.</p></div><button class="btn" onclick="queueCompanyTask('Run operations health check: review task queue, blocked work, agent reports, approvals and integration health.','operations')">▶ Run Ops Check</button></div>
 <div class="grid metrics">
 <div class="metric"><div class="label">Workflows</div><div class="num">42</div><div class="delta">running</div></div>
 <div class="metric"><div class="label">Automation Health</div><div class="num">98%</div><div class="delta">demo metric</div></div>
@@ -368,13 +368,13 @@ body{background:radial-gradient(ellipse at 50% -20%,#183c5e 0%,#09172a 43%,#050b
 </section>
 
 <section class="view" data-view="products">
-<div class="hero"><div><h1>Products & Services</h1><p>50 mapped offers across creator tools, marketing, sales, SMB services and creative products.</p></div><button class="btn" onclick="toast('Product Factory: new product brief queued')">+ New Product</button></div>
+<div class="hero"><div><h1>Products & Services</h1><p>50 mapped offers across creator tools, marketing, sales, SMB services and creative products.</p></div><button class="btn" onclick="openModal('command')">+ New Product</button></div>
 <div class="toolbar"><input id="productSearch" placeholder="Filter products…"><select id="productCat"><option value="all">All categories</option><option>Content / Creator</option><option>Marketing</option><option>Sales / Business</option><option>SMB Services</option><option>Creative / Personal</option></select></div>
 <div class="grid product-grid" id="productGrid"></div>
 </section>
 
 <section class="view" data-view="projects">
-<div class="hero"><div><h1>Projects</h1><p>Strategic programs that turn the DIMRI AI concept into a working company OS.</p></div><button class="btn" onclick="toast('Project created in planning queue')">+ New Project</button></div>
+<div class="hero"><div><h1>Projects</h1><p>Strategic programs that turn the DIMRI AI concept into a working company OS.</p></div><button class="btn" onclick="openModal('command')">+ New Project</button></div>
 <div class="grid two"><div class="project panel"><div class="panel-head"><h2>DIMRI AI Command Center</h2><span class="tag done">Building</span></div><p class="tiny">Central operating layer for agents, workflows, approvals and business metrics.</p><div class="bar"><i style="width:38%"></i></div><div class="tiny" style="margin-top:7px">Prototype foundation · 38%</div></div><div class="project panel"><div class="panel-head"><h2>Ghost Mode Engine</h2><span class="tag">Architecture</span></div><p class="tiny">Research truth gate, content pipeline, media generation and channel publishing.</p><div class="bar"><i style="width:24%"></i></div><div class="tiny" style="margin-top:7px">Integration-ready design · 24%</div></div><div class="project panel"><div class="panel-head"><h2>AI Business Acquisition</h2><span class="tag">Planning</span></div><p class="tiny">Lead discovery, qualification, outreach, CRM and proposal workflows.</p><div class="bar"><i style="width:18%"></i></div><div class="tiny" style="margin-top:7px">Workflow specification · 18%</div></div><div class="project panel"><div class="panel-head"><h2>Service Delivery Factory</h2><span class="tag">Planning</span></div><p class="tiny">Website, creative, video, marketing and support delivery orchestration.</p><div class="bar"><i style="width:14%"></i></div><div class="tiny" style="margin-top:7px">Service blueprints · 14%</div></div></div>
 </section>
 
@@ -478,8 +478,18 @@ function toast(msg){let t=$('toast');t.textContent=msg;t.classList.add('show');s
 async function routeBrain(){const box=$('brainResult');box.className='content-card';box.innerHTML='<b>Routing command…</b><p>DIMRI CEO is mapping the objective to capable departments.</p>';try{const r=await fetch(API_BASE+'/api/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'Find businesses, prepare personalized proposals, and create a verified Ghost Mode content idea',priority:'normal'})});const d=await r.json();const routes=(d.workflow&&d.workflow.routes)||[];box.innerHTML='<b>DIMRI CEO routing result</b><p>Task '+d.task.id+' queued.</p>'+routes.map(x=>'<div class="content-card" style="margin-top:8px"><b>'+x.agent+'</b><p>Matched: '+x.matched.join(', ')+'</p></div>').join('')+'<button class="btn" style="margin-top:10px" onclick="processTask(\''+d.task.id+'\')">Process Coordination Plan</button>';addActivity('DIMRI CEO','Queued command '+d.task.id+' for coordinated execution.');toast('Command queued successfully')}catch(e){box.innerHTML='<b>Backend unavailable</b><p>Check the live Render API.</p>';toast('Backend connection failed')}}
 async function processTask(id){try{const r=await fetch(API_BASE+'/api/tasks/'+id+'/process',{method:'POST'});const d=await r.json();$('brainResult').innerHTML='<b>Coordination complete</b><p>Task '+id+' is now '+d.task.status+'.</p><div class="content-card"><b>Execution</b><p>'+d.plan.execution+'</p></div><div class="content-card"><b>Approval</b><p>'+(d.task.result||'').replace(/</g,'&lt;')+'</p></div>';addActivity('DIMRI CEO','Processed '+id+' and recorded its execution/approval state.');toast('Task coordination processed')}catch(e){toast('Task processing failed')}}
 async function runCycle(){try{const r=await fetch(API_BASE+'/api/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'Run coordinated company cycle: research, growth, delivery and reporting',priority:'normal'})});const d=await r.json();addActivity('DIMRI CEO','Created live company task '+d.task.id+'.');toast('AI cycle queued: '+d.task.id);showView('brain');$('brainResult').innerHTML='<b>Company AI cycle queued</b><p>'+d.task.command+'</p><button class="btn" style="margin-top:10px" onclick="processTask(\''+d.task.id+'\')">Process Coordination Plan</button>'}catch(e){toast('Backend connection failed')}}
-function runGhost(){state.content.unshift(['New evidence-backed topic queued','Research running','Source verification required']);addActivity('Ghost Mode Agent','Started research-first content cycle.');renderContent();toast('Ghost Mode cycle started')}
-function runProspecting(){state.leads.unshift(['New qualified prospect','Need discovery pending','New']);$('leadMetric').textContent=125+1;$('growthLeads').textContent=126;addActivity('Lead Research Agent','Added a new qualified prospect to CRM.');renderLeads();toast('Prospecting cycle added a demo lead')}
+async function queueCompanyTask(command,view){
+ try{
+  const r=await fetch(API_BASE+'/api/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command,priority:'normal'})});
+  const d=await r.json();if(!r.ok)throw new Error(d.detail||'Task queue unavailable');
+  const task=d.task||{};addActivity('DIMRI CEO','Queued task '+(task.id||'')+': '+command);toast('Task queued · '+(task.id||''));
+  if(view){showView(view);const box=$('brainResult');if(box)box.innerHTML='<b>Task queued for coordination</b><p>'+personaEscape(task.command||command)+'</p><p class="tiny">Status: '+personaEscape(task.status||'queued')+' · Assigned: '+personaEscape(task.assigned_agent||'AI CEO')+'</p><button class="btn" style="margin-top:10px" onclick="processTask(\''+personaEscape(task.id||'')+'\')">Process Coordination Plan</button>'}
+  return task;
+ }catch(e){toast('Could not queue task: '+e.message);return null}
+}
+async function runGhost(){await queueCompanyTask('Ghost Mode: prepare a research-first content cycle with source verification, claim review and founder approval before publishing.','brain')}
+async function runProspecting(){await queueCompanyTask('Research relevant business prospects, qualify opportunities and prepare personalized outreach drafts for founder review.','brain')}
+async function runProspecting(){await queueCompanyTask('Research relevant business prospects, qualify opportunities and prepare personalized outreach drafts for founder review.','brain')}
 async function decideApproval(id,status){try{const r=await fetch(API_BASE+'/api/approvals/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,decision_note:'Founder decision from God Board'})});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Approval failed');addActivity('Founder',status==='approved'?'Approved '+id:'Rejected '+id);toast(status==='approved'?'Approval recorded':'Approval rejected');renderApprovals()}catch(e){toast('Approval action failed')}}
 function clearActivity(){state.activities=[];renderActivity();toast('Demo activity cleared')}
 function openModal(type){$('modal').classList.add('open');$('modalInput').value='';$('modalTitle').textContent=type==='client'?'New Client':'New Company Command';$('modalText').textContent=type==='client'?'Describe the client, service and desired outcome.':'Tell DIMRI what you want the company to accomplish.';$('modalInput').focus()}
@@ -534,7 +544,7 @@ async function submitPersonaBrief(){
  }catch(e){box.className='empty';box.textContent='Could not save persona: '+e.message;toast('Persona save failed')}
 }
 
-function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addActivity('DIMRI CEO','Created workflow: '+v);closeModal();toast('Workflow created in prototype queue')}
+async function submitModal(){let v=$('modalInput').value.trim()||'New company workflow';closeModal();await queueCompanyTask(v,'brain')}
 document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
 $('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
 $('search').addEventListener('input',e=>{let q=e.target.value.toLowerCase();if(q.includes('ghost'))showView('ghost');else if(q.includes('lead')||q.includes('sales'))showView('growth');else if(q.includes('agent'))showView('agents');else if(q.includes('product'))showView('products');else if(q.includes('structure')||q.includes('aishani')||q.includes('pillar')||q.includes('game'))showView('structure')});
