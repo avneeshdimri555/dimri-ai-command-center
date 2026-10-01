@@ -62,6 +62,31 @@ body{background:radial-gradient(circle at 20% 0%,#123d2b 0,#06110d 40%)}
 .org-lower section:nth-child(3) span{border-color:#426b96;background:#10243c;color:#c4ddf6}
 .org-divisions,.org-teams{scrollbar-color:#37684e #0a1727}
 @media(min-width:1201px){.org-divisions,.org-teams{gap:7px}.org-div{padding:8px 7px}.org-div li{font-size:6.5px}.org-div header b{font-size:9px}}
+
+/* AI Persona Studio: dedicated operational workspace */
+.persona-hero{border:1px solid #244b55;background:linear-gradient(110deg,#0c1c2e,#102b3b 55%,#102b31);padding:22px;border-radius:10px}
+.persona-hero .eyebrow{color:#61e8d8}.persona-hero h1{color:#f0fcff}.persona-hero p{max-width:690px}
+.persona-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.persona-metrics .metric{border-color:#27505b;background:linear-gradient(150deg,#102638,#0b1a2a)}
+.persona-metrics .num{color:#67e6d9}
+.persona-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:14px}
+.persona-create{border-color:#315968;background:linear-gradient(150deg,#10283a,#0b1b2b)}
+.field-label{display:block;font-size:10px;font-weight:700;color:#c6dce3;margin:12px 0 5px}
+.persona-create .search{width:100%;background:#091725;border:1px solid #294a5b;color:#e9f9ff;border-radius:6px;padding:10px;font:11px Manrope,Arial}
+.persona-create .search:focus{outline:1px solid #56dccc;border-color:#56dccc}
+.persona-text{min-height:72px;resize:vertical}.persona-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.persona-side{display:grid;gap:14px;align-content:start}
+.persona-empty{min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;color:#a9c1cb}
+.persona-symbol{width:48px;height:48px;border:1px solid #39717b;border-radius:14px;display:grid;place-items:center;font-size:25px;color:#62e7dc;background:#10333c;margin-bottom:10px}
+.persona-empty b{font-size:12px;color:#e6f7fa}.persona-empty p{max-width:340px;font-size:9px;line-height:1.7}
+.social-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #203b4a}.social-row:last-child{border-bottom:0}
+.social-icon{width:30px;height:30px;flex:none;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:17px;color:#061622;background:#72e7d5}
+.social-icon.instagram{background:#ff91ca}.social-icon.facebook{background:#7ebcff}.social-icon.youtube{background:#ff8888}.social-icon.x-social{background:#d4dbe0}
+.social-copy{flex:1;min-width:0}.social-copy b{display:block;font-size:10px}.social-copy small{display:block;font-size:8px;color:#a5bdc7;margin:3px 0 5px}.social-row .btn{font-size:8px;padding:7px}
+.persona-pipeline{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
+.persona-pipeline div{flex:1;min-width:82px;display:flex;flex-direction:column;gap:3px;padding:10px 6px;border:1px solid #28515c;background:#0e2432;border-radius:6px;text-align:center}
+.persona-pipeline b{font:9px 'DM Mono';color:#5ce6d7}.persona-pipeline strong{font-size:9px}.persona-pipeline small{font-size:7px;color:#a5bdc7}.persona-pipeline i{font-style:normal;color:#5ce6d7;font-size:12px}
+@media(max-width:850px){.persona-layout{grid-template-columns:1fr}.persona-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -71,6 +96,7 @@ body{background:radial-gradient(circle at 20% 0%,#123d2b 0,#06110d 40%)}
   <div class="nav-title">Command</div>
   <button class="nav active" data-view="overview"><span class="ico">◈</span><span>Overview</span></button>
   <button class="nav" data-view="structure"><span class="ico">🏢</span><span>Company Structure</span></button>
+  <button class="nav" data-view="persona"><span class="ico">✧</span><span>AI Persona Studio</span></button>
   <button class="nav" data-view="brain"><span class="ico">🧠</span><span>Company Brain</span></button>
   <button class="nav" data-view="agents"><span class="ico">◉</span><span>AI Workforce</span></button>
   <button class="nav" data-view="ghost"><span class="ico">👻</span><span>Ghost Mode</span></button>
@@ -136,6 +162,23 @@ body{background:radial-gradient(circle at 20% 0%,#123d2b 0,#06110d 40%)}
 <div class="org-lower"><section><h4>♙ SHARED CORE AGENTS <small>(Across All Divisions)</small></h4><div><span>Finance Agent</span><span>Legal & Compliance</span><span>Security Agent</span><span>Integration Agent</span><span>Infrastructure Agent</span><span>System Monitor</span></div></section><section class="org-flow"><h4>⬡ WORKFLOW</h4><div><span>Your Command</span><i>→</i><span>AI CEO Plans</span><i>→</i><span>Agents Execute</span><i>→</i><span>Quality Review</span><i>→</i><span>Your Approval</span><i>→</i><span>Publish / Deliver</span><i>→</i><span>Growth & Reports</span></div></section><section><h4>⬡ SECURITY & CONTROL</h4><div><span>Access Control</span><span>Data Encryption</span><span>Audit Logs</span><span>Identity Protection</span><span>Backup & Recovery</span><span>Safe Publishing</span></div></section></div>
 <p class="org-disclaimer">Targets are planning goals, not live totals. Agent tiles describe roles, not separate autonomous AI instances. External publishing and consequential actions remain approval-gated.</p>
 </div></section>
+
+<section class="view" data-view="persona">
+<div class="hero persona-hero"><div><div class="eyebrow">DIMRI STUDIO / CREATOR WORKSPACE</div><h1>✧ AI Persona Studio</h1><p>Create and manage consistent AI personas, develop their visual and voice identity, prepare content, and organize social-channel workflows.</p></div><button class="btn" onclick="showPersonaForm()">＋ Create Persona</button></div>
+<div class="persona-metrics"><div class="metric"><div class="label">Persona Profiles</div><div class="num" id="personaCount">0</div><div class="delta">Profiles in this workspace</div></div><div class="metric"><div class="label">Content Drafts</div><div class="num">—</div><div class="delta">Awaiting connected production</div></div><div class="metric"><div class="label">Social Accounts</div><div class="num">0</div><div class="delta">Not connected</div></div><div class="metric"><div class="label">Approval Gate</div><div class="num" style="font-size:16px">ON</div><div class="delta">Founder approval for publishing</div></div></div>
+<div class="persona-layout">
+<div class="panel persona-create" id="personaCreatePanel"><div class="panel-head"><h2>Persona Blueprint</h2><span class="chip">New profile brief</span></div><p class="tiny">Define the model's identity and content direction. Submitting creates a coordinated task; it does not generate or save a finished model yet.</p>
+<label class="field-label" for="personaName">Persona / Model Name</label><input class="search" id="personaName" placeholder="e.g. Aishani, Maya, Arjun">
+<label class="field-label" for="personaGender">Gender Presentation</label><select class="search" id="personaGender"><option>Feminine</option><option>Masculine</option><option>Androgynous</option></select>
+<label class="field-label" for="personaLook">Visual Identity</label><textarea class="search persona-text" id="personaLook" placeholder="Face shape, eyes, skin tone, hair, signature style, wardrobe..."></textarea>
+<label class="field-label" for="personaVoice">Voice DNA & Languages</label><input class="search" id="personaVoice" placeholder="Timbre, pitch, pace, Hindi / English / accent...">
+<label class="field-label" for="personaGoal">Content & Social Goal</label><textarea class="search persona-text" id="personaGoal" placeholder="Instagram niche, personality, reels, UGC, audience..."></textarea>
+<div class="persona-actions"><button class="btn" onclick="submitPersonaBrief()">Queue Persona Blueprint</button><button class="btn secondary" onclick="resetPersonaForm()">Clear</button></div>
+<div id="personaTaskResult" class="empty" style="margin-top:10px">Blueprints are routed through the company task queue.</div></div>
+<div class="persona-side"><div class="panel"><div class="panel-head"><h2>Persona Library</h2><span class="chip">Workspace</span></div><div class="persona-empty"><div class="persona-symbol">◉</div><b>No saved persona profiles yet</b><p>Start with a persona blueprint. Persistent model storage, visual generation and versioned asset management still need their backend workflow.</p><button class="btn secondary" onclick="showPersonaForm()">Create first persona</button></div></div>
+<div class="panel"><div class="panel-head"><h2>Social Presence</h2><span class="chip">Account setup</span></div><div class="social-row"><div class="social-icon instagram">◎</div><div class="social-copy"><b>Instagram</b><small>Persona reels, posts, captions and account management</small><span class="tag">Not connected</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div><div class="social-row"><div class="social-icon facebook">f</div><div class="social-copy"><b>Facebook</b><small>Page content and distribution workflow</small><span class="tag">Not connected</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div><div class="social-row"><div class="social-icon youtube">▶</div><div class="social-copy"><b>YouTube</b><small>Shorts, videos and channel publishing workflow</small><span class="tag">Connection required</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div><div class="social-row"><div class="social-icon x-social">𝕏</div><div class="social-copy"><b>X</b><small>Persona posts and audience updates</small><span class="tag">Not connected</span></div><button class="btn secondary" onclick="showView('settings')">Set up ↗</button></div></div></div></div>
+<div class="panel" style="margin-top:15px"><div class="panel-head"><h2>Persona Production Pipeline</h2><span class="chip green">Founder controlled</span></div><div class="persona-pipeline"><div><b>01</b><strong>Blueprint</strong><small>Identity & goals</small></div><i>→</i><div><b>02</b><strong>Visual DNA</strong><small>Face, style & assets</small></div><i>→</i><div><b>03</b><strong>Voice DNA</strong><small>Voice & language</small></div><i>→</i><div><b>04</b><strong>Content Studio</strong><small>Images, reels, UGC</small></div><i>→</i><div><b>05</b><strong>Review</strong><small>Quality & rights</small></div><i>→</i><div><b>06</b><strong>Publish</strong><small>Approved accounts</small></div></div><p class="org-disclaimer">This is the Persona Studio workspace foundation. Persona persistence, image/video generation, OAuth account connection and direct social publishing are not yet active in this module.</p></div>
+</section>
 
 <section class="view" data-view="brain">
 <div class="hero"><div><h1>🧠 Company Brain</h1><p>The orchestration layer that turns one founder command into coordinated department work.</p></div><button class="btn" onclick="routeBrain()">▶ Route Test Command</button></div>
@@ -392,6 +435,17 @@ async function decideApproval(id,status){try{const r=await fetch(API_BASE+'/api/
 function clearActivity(){state.activities=[];renderActivity();toast('Demo activity cleared')}
 function openModal(type){$('modal').classList.add('open');$('modalInput').value='';$('modalTitle').textContent=type==='client'?'New Client':'New Company Command';$('modalText').textContent=type==='client'?'Describe the client, service and desired outcome.':'Tell DIMRI what you want the company to accomplish.';$('modalInput').focus()}
 function closeModal(){$('modal').classList.remove('open')}
+
+function showPersonaForm(){const p=$('personaCreatePanel');if(p){p.scrollIntoView({behavior:'smooth',block:'start'});$('personaName').focus()}}
+function resetPersonaForm(){['personaName','personaLook','personaVoice','personaGoal'].forEach(id=>$(id).value='');$('personaGender').selectedIndex=0;$('personaTaskResult').textContent='Blueprints are routed through the company task queue.'}
+async function submitPersonaBrief(){
+ const name=$('personaName').value.trim(),gender=$('personaGender').value,look=$('personaLook').value.trim(),voice=$('personaVoice').value.trim(),goal=$('personaGoal').value.trim(),box=$('personaTaskResult');
+ if(!name||!look||!goal){box.textContent='Please enter a persona name, visual identity and content goal.';return}
+ const command='Create an AI persona blueprint for '+name+'. Gender presentation: '+gender+'. Visual identity: '+look+'. Voice DNA and languages: '+(voice||'To be defined')+'. Content and social goal: '+goal+'. Route this as a persona studio planning task; do not generate assets or publish.';
+ box.className='content-card';box.textContent='Sending persona blueprint to the company task queue…';
+ try{const r=await fetch(API_BASE+'/api/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command,priority:'normal'})});if(!r.ok)throw new Error('queue unavailable');const d=await r.json();const taskId=d.task&&d.task.id?d.task.id:'queued';box.innerHTML='<b>Persona blueprint queued</b><p>Task '+taskId+' has been added to the company queue. This is a planning task, not a saved or generated model.</p>';addActivity('Persona Studio','Queued blueprint for '+name+' ('+taskId+').');toast('Persona blueprint queued')}catch(e){box.className='empty';box.textContent='Could not reach the company task queue. Please retry when the backend is available.';toast('Queue unavailable')}
+}
+
 function submitModal(){let v=$('modalInput').value.trim()||'New workflow';addActivity('DIMRI CEO','Created workflow: '+v);closeModal();toast('Workflow created in prototype queue')}
 document.addEventListener('click',e=>{if(e.target.classList.contains('switch'))e.target.classList.toggle('on')});
 $('productSearch').addEventListener('input',renderProducts);$('productCat').addEventListener('change',renderProducts);
