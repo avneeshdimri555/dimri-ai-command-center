@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIMRI AI — Autonomous Company OS</title>
+<title>DIMRI AI — God Board | Internal Workspace</title>
 <style>
 :root{--bg:#070b16;--panel:#0f1628;--panel2:#121c31;--line:#22304a;--text:#f4f7ff;--muted:#8e9bb7;--blue:#6d7cff;--cyan:#39d9ff;--green:#35d39a;--amber:#ffbf69;--pink:#ef71c8;--red:#ff6b7a;--shadow:0 16px 45px rgba(0,0,0,.28)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#15204a 0,#070b16 36%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -42,6 +42,26 @@ body{background:radial-gradient(circle at 20% 0%,#123d2b 0,#06110d 40%)}
 .org-lower{min-width:1050px;display:grid;grid-template-columns:1.1fr 1.25fr .85fr;gap:6px;margin-top:6px}.org-lower section{padding:7px;border:1px solid #2b6481;border-radius:7px;background:linear-gradient(155deg,#0e2338,#091729)}.org-lower h4{font-size:7.5px;color:#d4edf8;margin:0 0 5px;padding-bottom:5px;border-bottom:1px solid #29475f}.org-lower h4 small{font-size:6px;font-weight:400;color:#91b8cc}.org-lower section>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.org-lower section span{min-height:27px;display:grid;place-items:center;text-align:center;padding:2px;border:1px solid #2a5271;border-radius:4px;background:#10243a;color:#c3dcec;font-size:5.8px;line-height:1.1}.org-flow>div{display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px}.org-flow>div span{background:#102d25!important;border-color:#2d6854!important;color:#a8e8c3!important}.org-flow i{font-size:7px;color:#61bd8a;font-style:normal}.org-disclaimer{min-width:1050px;text-align:center;color:#809db4;font-size:6px;margin:7px 0 0}
 @media(max-width:800px){.org-board{padding:7px;overscroll-behavior-x:contain}.org-hero{gap:8px}.org-hero .btn{font-size:10px}}
 
+
+/* Founder reference palette: distinct vivid division colors within the internal God Board */
+.org-board{border-color:#31516d;background:radial-gradient(ellipse at 50% 0%,#173552,#09172a 66%,#071322)}
+.org-div.svc{--a:#5ce7a4;--b:#2a8858}
+.org-div.persona{--a:#ff79cb;--b:#a7438a}
+.org-div.channels{--a:#5be8d0;--b:#238f83}
+.org-div.apps{--a:#ffb45f;--b:#b96e2c}
+.org-div.products{--a:#bc91ff;--b:#7950b5}
+.org-div.education{--a:#ff718e;--b:#b64061}
+.org-div{box-shadow:inset 0 1px 0 color-mix(in srgb,var(--a) 18%,transparent);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.org-div:hover{transform:translateY(-2px);box-shadow:0 8px 22px #0005,inset 0 1px 0 color-mix(in srgb,var(--a) 24%,transparent)}
+.org-div header strong{box-shadow:0 2px 10px color-mix(in srgb,var(--a) 18%,transparent)}
+.org-div button{font-weight:800;cursor:pointer}
+.org-team{border-color:#31526e;background:linear-gradient(155deg,#102943,#0a1727)}
+.org-team.t1{border-color:#9b4d8a}.org-team.t2{border-color:#278b7d}.org-team.t3{border-color:#2c8d63}.org-team.t4{border-color:#b57837}.org-team.t5{border-color:#8054b7}.org-team.t6{border-color:#b74d68}
+.org-lower section:nth-child(1){border-color:#32845e}.org-lower section:nth-child(2){border-color:#98712e}.org-lower section:nth-child(3){border-color:#477aa8}
+.org-lower section:nth-child(2) span{border-color:#87652c;background:#2b2515;color:#f7d78c}
+.org-lower section:nth-child(3) span{border-color:#426b96;background:#10243c;color:#c4ddf6}
+.org-divisions,.org-teams{scrollbar-color:#37684e #0a1727}
+@media(min-width:1201px){.org-divisions,.org-teams{gap:7px}.org-div{padding:8px 7px}.org-div li{font-size:6.5px}.org-div header b{font-size:9px}}
 </style>
 </head>
 <body>
