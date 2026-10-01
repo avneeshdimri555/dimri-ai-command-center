@@ -13,6 +13,25 @@ button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{pos
 @media(max-width:1200px){.metrics{grid-template-columns:repeat(3,1fr)}.dept-grid{grid-template-columns:repeat(3,1fr)}.product-grid{grid-template-columns:repeat(3,1fr)}.cols{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:800px){.sidebar{width:72px;padding:15px 8px}.brand{justify-content:center}.brand div:last-child,.nav span:not(.ico),.nav-title,.sidebar-foot{display:none}.nav{justify-content:center}.main{padding:16px 12px}.metrics,.dept-grid,.agent-grid,.two,.three,.product-grid{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.search{width:150px}}
 @media(max-width:520px){.metrics,.dept-grid,.agent-grid,.two,.three,.product-grid{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.pipeline{grid-template-columns:repeat(2,1fr)}.top-actions{width:100%}.search{flex:1;width:auto}}
+
+/* DIMRI AI GREEN COMMAND THEME */
+:root{--bg:#06110d;--panel:#0b1a14;--panel2:#10241b;--line:#1d4935;--text:#effff7;--muted:#8eae9f;--blue:#20d889;--cyan:#58f2ae;--green:#42e39a;--amber:#ffc76b;--pink:#74e8b2;--red:#ff7180;--shadow:0 16px 45px rgba(0,0,0,.34)}
+body{background:radial-gradient(circle at 20% 0%,#123d2b 0,#06110d 40%)}
+.sidebar{background:rgba(5,18,13,.96);border-right-color:var(--line)}
+.brandmark{background:linear-gradient(135deg,#42e39a,#16a66b);color:#03130c}
+.nav:hover,.nav.active{background:#103023}.nav.active{box-shadow:inset 3px 0 0 var(--green)}
+.badge{border-color:#27684b;background:#0b3021;color:#7af0b7}
+.btn{background:linear-gradient(135deg,#20d889,#129b64);box-shadow:0 8px 24px rgba(32,216,137,.18)}
+.btn.secondary{background:#153326}.btn.success{background:#16744f}
+.metric,.panel,.agent,.dept,.lead,.client,.product,.activity,.approval{background:linear-gradient(180deg,rgba(14,35,25,.98),rgba(8,24,17,.98));border-color:var(--line)}
+.chip{background:#102d20;color:#bcebd3;border-color:#23513d}.chip.green{background:#0b3021;color:#79efb5;border-color:#247250}
+.stage,.content-card,.toolbar input,.toolbar select,.setting,.flow .f{background:#091d15;border-color:var(--line)}
+.bar i{background:linear-gradient(90deg,#18b875,#58f2ae)}
+.avatar{background:#123525}.status,.delta,.online{color:var(--green)}
+.dot{background:var(--green);box-shadow:0 0 14px rgba(66,227,154,.6)}
+.switch.on{background:#197b56}
+/* green accents for headings and live controls */
+.panel h2,.hero h1{letter-spacing:.1px}
 </style>
 </head>
 <body>
