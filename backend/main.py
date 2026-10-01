@@ -14,6 +14,7 @@ from .youtube_studio import list_channels, add_channel, list_content, create_con
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image
 from .ghost_mode import review_claims, status as ghost_mode_status
 from .agents import list_agents, get_agent
+from .facebook_studio import list_pages as list_facebook_pages, add_page as add_facebook_page
 
 app = FastAPI(title="DIMRI AI Company OS", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -56,6 +57,11 @@ class DigitalProduct(BaseModel):
     currency: str = "USD"
     asset_path: str | None = None
     marketplaces: str = "gumroad"
+
+class FacebookPage(BaseModel):
+    page_name: str
+    page_id: str
+    page_url: str = ""
 
 class AgentDispatch(BaseModel):
     agent_id: str
@@ -161,6 +167,19 @@ def company() -> dict[str, Any]:
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
 
+
+@app.get("/api/facebook/pages")
+def facebook_pages() -> dict[str, Any]:
+    pages = list_facebook_pages()
+    return {"pages": pages, "count": len(pages), "integration_state": "manual_registry_only",
+            "note": "Page records are not authenticated. Meta OAuth, ownership verification, and Graph API permissions are required for publishing or insights."}
+
+@app.post("/api/facebook/pages")
+def facebook_add_page(page: FacebookPage) -> dict[str, Any]:
+    try:
+        return {"page": add_facebook_page(**page.model_dump()), "status": "registered_not_connected"}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
 @app.get("/api/agents")
 def agents() -> dict[str, Any]:
