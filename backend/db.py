@@ -54,6 +54,18 @@ def init_db() -> None:
             linked_campaigns TEXT NOT NULL DEFAULT '[]',
             created_at TEXT NOT NULL, updated_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS persona_autopilot (
+            persona_id TEXT PRIMARY KEY, platforms TEXT NOT NULL,
+            photos_per_day INTEGER NOT NULL DEFAULT 3,
+            videos_per_day INTEGER NOT NULL DEFAULT 2,
+            content_themes TEXT NOT NULL, mode TEXT NOT NULL DEFAULT 'draft',
+            timezone TEXT NOT NULL DEFAULT 'Asia/Kolkata',
+            posting_window TEXT NOT NULL DEFAULT '10:00-20:00',
+            disclose_ai INTEGER NOT NULL DEFAULT 1,
+            enabled INTEGER NOT NULL DEFAULT 0,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(persona_id) REFERENCES personas(id) ON DELETE CASCADE
+        );
         """)
 
 
@@ -244,3 +256,39 @@ def update_persona(persona_id: str, updates: dict[str, Any]) -> dict[str, Any] |
         except (TypeError, ValueError):
             item[field] = []
     return item
+
+
+def get_persona_autopilot(persona_id: str) -> dict[str, Any] | None:
+    import json
+    with connect() as conn:
+        row = conn.execute("SELECT * FROM persona_autopilot WHERE persona_id=?", (persona_id,)).fetchone()
+    if not row:
+        return None
+    item = dict(row)
+    item["platforms"] = json.loads(item.get("platforms") or "[]")
+    item["enabled"] = bool(item["enabled"])
+    item["disclose_ai"] = bool(item["disclose_ai"])
+    return item
+
+
+def save_persona_autopilot(persona_id: str, platforms: list[str], photos_per_day: int,
+                           videos_per_day: int, content_themes: str, mode: str,
+                           timezone: str = "Asia/Kolkata", posting_window: str = "10:00-20:00",
+                           disclose_ai: bool = True, enabled: bool = False) -> dict[str, Any] | None:
+    import json
+    timestamp = now()
+    with connect() as conn:
+        exists = conn.execute("SELECT id FROM personas WHERE id=?", (persona_id,)).fetchone()
+        if not exists:
+            return None
+        conn.execute(
+            "INSERT INTO persona_autopilot (persona_id,platforms,photos_per_day,videos_per_day,content_themes,mode,timezone,posting_window,disclose_ai,enabled,updated_at) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(persona_id) DO UPDATE SET "
+            "platforms=excluded.platforms,photos_per_day=excluded.photos_per_day,videos_per_day=excluded.videos_per_day,"
+            "content_themes=excluded.content_themes,mode=excluded.mode,timezone=excluded.timezone,"
+            "posting_window=excluded.posting_window,disclose_ai=excluded.disclose_ai,enabled=excluded.enabled,updated_at=excluded.updated_at",
+            (persona_id,json.dumps(platforms),photos_per_day,videos_per_day,content_themes,mode,timezone,posting_window,int(disclose_ai),int(enabled),timestamp)
+        )
+        conn.execute("INSERT INTO audit_log VALUES (?,?,?,?,?)",
+                     (str(uuid4()), "persona_autopilot_saved", "Founder", persona_id, timestamp))
+    return get_persona_autopilot(persona_id)
