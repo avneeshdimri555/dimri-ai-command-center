@@ -1,6 +1,7 @@
 """Persona media generation for DIMRI AI. Provider calls are server-side only."""
 import os
 import base64
+import binascii
 import httpx
 
 OPENAI_IMAGES_URL = "https://api.openai.com/v1/images/generations"
