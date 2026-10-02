@@ -90,11 +90,11 @@
           </div>
           <div class="de-score"><span class="de-small">Identity strength</span><div class="de-bar"><i style="width:${score}%"></i></div><b style="font-size:9px">${score}%</b></div>
           <div class="de-actions">
-            <button class="de-btn primary" data-de-lock>${state.identityLocked?'✓ Identity Locked':'🔒 Lock Identity'}</button>
+            <button class="de-btn violet" data-de-generate>✨ Generate Real Photo</button><button class="de-btn primary" data-de-lock>${state.identityLocked?'✓ Identity Locked':'🔒 Lock Identity'}</button>
             <button class="de-btn" data-de-save>Save Blueprint</button>
             <button class="de-btn violet" data-de-daily>＋ Daily Content Set</button>
           </div>
-          <div class="de-note">The visual blueprint is an interactive design preview. Real photorealistic image/video generation is only activated when a provider is connected; the UI never pretends a mock image is a generated asset.</div>
+          <div id="de-real-output" style="margin-top:10px"></div><div class="de-note">The visual blueprint is an interactive design preview. Real photorealistic image/video generation is only activated when a provider is connected; the UI never pretends a mock image is a generated asset.</div>
         </div>
         <div class="de-card">
           <h3>Appearance &amp; creator DNA</h3>
@@ -180,10 +180,37 @@
     if(typeof window.toast==='function') window.toast('4 controlled concepts created · design previews');
   }
 
+
+  async function generateRealPhoto(){
+    const btn=document.querySelector('#dimri-engine-root [data-de-generate]');
+    const out=document.getElementById('de-real-output');
+    if(!btn||!out)return;
+    btn.disabled=true; btn.textContent='Generating…';
+    out.innerHTML='<div class="de-small">Calling the configured image provider securely from the backend…</div>';
+    try{
+      const api=(window.DIMRI_API_URL||'https://dimri-ai-god-board-api.onrender.com').replace(/\/$/,'');
+      const response=await fetch(api+'/api/personas/generate-image',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({profile:state,scene:'premium creator social-media portrait',size:'1024x1536'})
+      });
+      const data=await response.json();
+      if(!response.ok) throw new Error(data.detail||'Generation failed');
+      const img=data.image||{};
+      const src=img.b64_json?'data:image/png;base64,'+img.b64_json:img.url;
+      if(!src) throw new Error('Provider returned no image');
+      out.innerHTML='<div class="de-small" style="margin-bottom:6px">REAL PROVIDER OUTPUT · '+esc(img.model||'image model')+'</div><img src="'+esc(src)+'" alt="Generated persona" style="display:block;width:100%;max-height:560px;object-fit:contain;border-radius:10px;border:1px solid #28516b;background:#07101d">';
+      if(typeof window.toast==='function')window.toast('Real persona photo generated');
+    }catch(err){
+      out.innerHTML='<div class="de-note">Generation unavailable: '+esc(err.message||String(err))+'</div>';
+      if(typeof window.toast==='function')window.toast('Image generation unavailable');
+    }finally{btn.disabled=false;btn.textContent='✨ Generate Real Photo';}
+  }
+
   function bind(root){
     root.querySelectorAll('[data-de-key]').forEach(el=>{
       el.oninput=el.onchange=()=>{state[el.dataset.deKey]=el.value;write();applyVisual(root);};
     });
+    root.querySelector('[data-de-generate]')?.addEventListener('click',generateRealPhoto);
     root.querySelector('[data-de-lock]')?.addEventListener('click',()=>{state.identityLocked=!state.identityLocked;write();render();});
     root.querySelector('[data-de-save]')?.addEventListener('click',saveBlueprint);
     root.querySelector('[data-de-daily]')?.addEventListener('click',dailySet);
