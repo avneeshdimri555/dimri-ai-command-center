@@ -163,4 +163,4 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dimri-persona-studio-demo.json';a.click();URL.revokeObjectURL(a.href)}
 function clearData(){if(!confirm('This removes all AI Persona Studio demo records saved in this browser. Continue?'))return;localStorage.removeItem(KEY);db={personas:[],jobs:[],campaigns:[],productDNA:[],boards:[],plans:[],assets:[],voices:[],calendar:[],credits:250,ledger:[]};refresh();toast('Local demo data cleared')}
 load();refresh();renderStep();renderCalendar();
-</script></body></html>
+</script><script src="persona-engine.js"></script></body></html>
