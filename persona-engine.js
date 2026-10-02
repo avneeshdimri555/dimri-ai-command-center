@@ -3,7 +3,7 @@
   const KEY = 'dimriPersonaEngineV2';
   const SLOT_KEY = 'dimriPersonaSlotsV2';
   const defaults = {
-    name:'', niche:'Creator', gender:'Feminine', age:'Adult 25–34',
+    name:'', niche:'Creator', gender:'Feminine', age:'Adult 25–34', referenceImageData:'',
     face:'Soft oval', skin:'Warm medium', eyes:'Large almond', iris:'Hazel',
     hair:'Long wavy', hairColor:'Dark brown', body:'Balanced',
     outfit:'Modern casual', expression:'Warm smile', pose:'3/4 portrait',
@@ -191,7 +191,7 @@
       const api=(window.DIMRI_API_URL||'https://dimri-ai-god-board-api.onrender.com').replace(/\/$/,'');
       const response=await fetch(api+'/api/personas/generate-image',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({profile:state,scene:'premium creator social-media portrait',size:'1024x1536'})
+        body:JSON.stringify({profile:{...state,reference_image_b64:state.referenceImageData||''},scene:'premium photorealistic creator social-media portrait',size:'1024x1536'})
       });
       const data=await response.json();
       if(!response.ok) throw new Error(data.detail||'Generation failed');
@@ -239,6 +239,16 @@
   read();
   ensureStyles();
   const boot=()=>{ if(document.getElementById('page-creator')) render(); };
+  document.addEventListener('change',event=>{
+    const input=event.target;
+    if(input?.id!=='f-referenceUpload')return;
+    const file=input.files?.[0];
+    if(!file||!file.type.startsWith('image/'))return;
+    if(file.size>12000000){if(typeof window.toast==='function')window.toast('Choose a reference photo under 12 MB');return;}
+    const reader=new FileReader();
+    reader.onload=()=>{const img=new Image();img.onload=()=>{const max=720,scale=Math.min(1,max/img.width,max/img.height),canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);state.referenceImageData=canvas.toDataURL('image/jpeg',0.72);write();const root=document.getElementById('dimri-engine-root');if(root)applyVisual(root);};img.src=reader.result;};
+    reader.readAsDataURL(file);
+  });
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   window.addEventListener('storage',()=>{read();if(document.getElementById('page-creator')?.classList.contains('active'))render();});
 })();
