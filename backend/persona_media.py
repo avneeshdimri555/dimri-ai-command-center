@@ -7,6 +7,16 @@ import httpx
 OPENAI_IMAGES_URL = "https://api.openai.com/v1/images/generations"
 
 def persona_prompt(profile: dict, scene: str = "") -> str:
+    scene_text = scene.strip() or "premium social-media creator portrait"
+    if profile.get("reference_image_b64"):
+        return (
+            "Edit the supplied reference image into a new photorealistic creator-brand scene. "
+            "Preserve the exact same adult person's recognizable identity, facial structure, eye shape and color, "
+            "skin tone, hairstyle, hair color, age presentation, and distinguishing features from the reference. "
+            "Do not replace the person or invent a different face. Change only pose, wardrobe, setting, framing, "
+            "and lighting as appropriate for this scene. Natural anatomy, realistic skin texture, premium commercial "
+            "photography, no text, no watermark. Scene: " + scene_text + "."
+        )
     fields = [
         f"adult {profile.get('gender','androgynous')} creator, age range {profile.get('age','Adult 25–34')}",
         f"face shape: {profile.get('face','Soft oval')}",
