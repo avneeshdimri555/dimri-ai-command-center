@@ -12,6 +12,7 @@ from .marketplaces import marketplace_status
 from .integrations import integration_status
 from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content, mark_published, mark_publish_error, get_channel_automation, save_channel_automation
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image, upload_video
+from .persona_media import generate_persona_image
 from .ghost_mode import review_claims, status as ghost_mode_status
 from .agents import list_agents, get_agent, workforce_summary, CORE_TEAM, DIVISIONS
 from .facebook_studio import list_pages as list_facebook_pages, add_page as add_facebook_page
@@ -295,6 +296,23 @@ def company() -> dict[str, Any]:
         "state":{"persistent_memory":True,"durable_task_queue":True,"real_agent_execution":False},
         "principles":{"ghost_mode_real_info_first":True,"source_verification":True,"founder_approval_for_consequential_actions":True,"no_impersonation":True,"no_bulk_spam":True}}
 
+
+class PersonaImageRequest(BaseModel):
+    profile: dict[str, Any]
+    scene: str = ""
+    size: str = "1024x1536"
+
+@app.post("/api/personas/generate-image")
+async def persona_generate_image(payload: PersonaImageRequest) -> dict[str, Any]:
+    if not payload.profile:
+        raise HTTPException(status_code=400, detail="Persona profile is required")
+    if payload.size not in {"1024x1024", "1024x1536", "1536x1024"}:
+        raise HTTPException(status_code=400, detail="Unsupported image size")
+    try:
+        result = await generate_persona_image(payload.profile, payload.scene, payload.size)
+        return {"generated": True, "provider": "openai", "image": result}
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
 
 @app.get("/api/personas")
 def personas() -> dict[str, Any]:
