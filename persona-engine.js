@@ -90,7 +90,7 @@
           </div>
           <div class="de-score"><span class="de-small">Identity strength</span><div class="de-bar"><i style="width:${score}%"></i></div><b style="font-size:9px">${score}%</b></div>
           <div class="de-actions">
-            <button class="de-btn violet" data-de-generate>✨ Generate Real Photo</button><button class="de-btn primary" data-de-lock>${state.identityLocked?'✓ Identity Locked':'🔒 Lock Identity'}</button>
+            <button class="de-btn violet" data-de-generate>✨ Generate Real Photo</button><button class="de-btn" data-de-video>▷ Generate Video</button><button class="de-btn primary" data-de-lock>${state.identityLocked?'✓ Identity Locked':'🔒 Lock Identity'}</button>
             <button class="de-btn" data-de-save>Save Blueprint</button>
             <button class="de-btn violet" data-de-daily>＋ Daily Content Set</button>
           </div>
@@ -206,11 +206,26 @@
     }finally{btn.disabled=false;btn.textContent='✨ Generate Real Photo';}
   }
 
+  async function generateRealVideo(){
+    const btn=document.querySelector('#dimri-engine-root [data-de-video]'), out=document.getElementById('de-real-output');
+    if(!btn||!out)return;
+    btn.disabled=true; btn.textContent='Starting…';
+    try{
+      const api=(window.DIMRI_API_URL||'https://dimri-ai-god-board-api.onrender.com').replace(/\/$/,'');
+      const response=await fetch(api+'/api/personas/generate-video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:state,scene:'premium vertical social-media creator clip',seconds:'4',size:'720x1280'})});
+      const data=await response.json(); if(!response.ok)throw new Error(data.detail||'Video generation failed');
+      const v=data.video||{}; out.innerHTML='<div class="de-small">VIDEO JOB · '+esc(v.id||'queued')+' · '+esc(v.status||'queued')+'</div><div class="de-note">Sora video generation is asynchronous. Use the video job status endpoint to retrieve progress and the finished asset.</div>';
+      if(typeof window.toast==='function')window.toast('Video generation job started');
+    }catch(err){out.innerHTML='<div class="de-note">Video generation unavailable: '+esc(err.message||String(err))+'</div>';if(typeof window.toast==='function')window.toast('Video generation unavailable');}
+    finally{btn.disabled=false;btn.textContent='▷ Generate Video';}
+  }
+
   function bind(root){
     root.querySelectorAll('[data-de-key]').forEach(el=>{
       el.oninput=el.onchange=()=>{state[el.dataset.deKey]=el.value;write();applyVisual(root);};
     });
     root.querySelector('[data-de-generate]')?.addEventListener('click',generateRealPhoto);
+    root.querySelector('[data-de-video]')?.addEventListener('click',generateRealVideo);
     root.querySelector('[data-de-lock]')?.addEventListener('click',()=>{state.identityLocked=!state.identityLocked;write();render();});
     root.querySelector('[data-de-save]')?.addEventListener('click',saveBlueprint);
     root.querySelector('[data-de-daily]')?.addEventListener('click',dailySet);
