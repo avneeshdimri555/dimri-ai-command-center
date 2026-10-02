@@ -80,7 +80,7 @@
       <div class="de-grid">
         <div class="de-card">
           <h3>Live visual blueprint</h3>
-          <div class="de-preview" id="de-preview">
+          <div class="de-preview" id="de-preview"><img id="de-photo" alt="Persona reference preview" style="display:none;position:absolute;inset:0;width:100%;height:100%;max-height:520px;object-fit:contain;background:#07101d">
             <div class="de-scene" id="de-scene">
               <div class="de-hair"></div><div class="de-head"></div>
               <div class="de-eyes"><span class="de-eye"></span><span class="de-eye"></span></div>
@@ -117,6 +117,9 @@
   }
 
   function applyVisual(root){
+    const photo=root.querySelector('#de-photo');
+    if(photo&&state.referenceImageData){photo.src=state.referenceImageData;photo.style.display='block';}
+    else if(photo){photo.removeAttribute('src');photo.style.display='none';}
     const scene=root.querySelector('#de-scene'); if(!scene)return;
     const hairMap={'Long wavy':'polygon(0 0,100% 0,96% 78%,82% 54%,68% 83%,51% 58%,37% 84%,20% 56%,4% 79%)','Long straight':'polygon(0 0,100% 0,96% 100%,78% 80%,62% 100%,45% 82%,25% 100%,4% 88%)','Curly':'none','Shoulder bob':'polygon(0 0,100% 0,94% 82%,72% 62%,52% 78%,28% 60%,6% 85%)','Short textured':'polygon(0 0,100% 0,94% 58%,75% 42%,58% 60%,40% 40%,22% 62%,5% 48%)','Braided':'polygon(0 0,100% 0,90% 70%,72% 56%,55% 78%,38% 57%,18% 76%,4% 58%)'};
     const faceMap={'Soft oval':'48%','Round':'52%','Heart':'55% 45% 48% 48%','Square':'34%','Long oval':'42%'};
@@ -198,7 +201,7 @@
       const img=data.image||{};
       const src=img.b64_json?'data:image/png;base64,'+img.b64_json:img.url;
       if(!src) throw new Error('Provider returned no image');
-      out.innerHTML='<div class="de-small" style="margin-bottom:6px">REAL PROVIDER OUTPUT · '+esc(img.model||'image model')+'</div><img src="'+esc(src)+'" alt="Generated persona" style="display:block;width:100%;max-height:560px;object-fit:contain;border-radius:10px;border:1px solid #28516b;background:#07101d">';
+      out.innerHTML='<div class="de-small" style="margin-bottom:6px">REAL PROVIDER OUTPUT · '+esc(img.model||'image model')+'</div><img src="'+esc(src)+'" alt="Generated persona" style="display:block;width:100%;max-height:560px;object-fit:contain;border-radius:10px;border:1px solid #28516b;background:#07101d">'; const photo=document.querySelector('#dimri-engine-root #de-photo'); if(photo){photo.src=src;photo.style.display='block';}
       if(typeof window.toast==='function')window.toast('Real persona photo generated');
     }catch(err){
       out.innerHTML='<div class="de-note">Generation unavailable: '+esc(err.message||String(err))+'</div>';
