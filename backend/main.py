@@ -13,6 +13,7 @@ from .integrations import integration_status
 from .youtube_studio import list_channels, add_channel, list_content, create_content, update_content, mark_published, mark_publish_error, get_channel_automation, save_channel_automation
 from .youtube_oauth import oauth_start_url, oauth_callback, oauth_status, fetch_my_channels, generate_image, upload_video
 from .persona_media import generate_persona_image
+from .persona_video import create_persona_video, get_persona_video
 from .ghost_mode import review_claims, status as ghost_mode_status
 from .agents import list_agents, get_agent, workforce_summary, CORE_TEAM, DIVISIONS
 from .facebook_studio import list_pages as list_facebook_pages, add_page as add_facebook_page
@@ -311,6 +312,32 @@ async def persona_generate_image(payload: PersonaImageRequest) -> dict[str, Any]
     try:
         result = await generate_persona_image(payload.profile, payload.scene, payload.size)
         return {"generated": True, "provider": "openai", "image": result}
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+class PersonaVideoRequest(BaseModel):
+    profile: dict[str, Any]
+    scene: str = ""
+    seconds: str = "4"
+    size: str = "720x1280"
+    reference_b64: str | None = None
+
+@app.post("/api/personas/generate-video")
+async def persona_generate_video(payload: PersonaVideoRequest) -> dict[str, Any]:
+    if not payload.profile:
+        raise HTTPException(status_code=400, detail="Persona profile is required")
+    if payload.seconds not in {"4", "8", "12"} or payload.size not in {"720x1280", "1280x720", "1024x1792", "1792x1024"}:
+        raise HTTPException(status_code=400, detail="Unsupported video settings")
+    try:
+        job = await create_persona_video(payload.profile, payload.scene, payload.seconds, payload.reference_b64, payload.size)
+        return {"generated": True, "provider": "openai", "video": job}
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+@app.get("/api/personas/video/{video_id}")
+async def persona_video_status(video_id: str) -> dict[str, Any]:
+    try:
+        return {"video": await get_persona_video(video_id)}
     except Exception as exc:
         raise HTTPException(status_code=503, detail=str(exc))
 
